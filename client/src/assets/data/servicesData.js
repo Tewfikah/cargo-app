@@ -1,6 +1,6 @@
-import image from '../image1.png';
-import image3 from '../image3.png';
-import image4 from '../image4.png';
+import image from '../image1.jpg';
+import image3 from '../image3.jpg';
+import image4 from '../image4.jpg';
 
 
 
