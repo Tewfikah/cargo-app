@@ -32,7 +32,7 @@ const Navbar = () => {
 
             <Link
               to="/login"
-              className="bg-gray-900 text-white px-5 py-2 rounded-full hover:bg-gray-800 transition"
+              className="bg-gray-900 text-white px-5 py-2 rounded-sm hover:bg-gray-800 transition"
             >
               Log in
             </Link>
@@ -74,7 +74,7 @@ const Navbar = () => {
           </Link>
           <Link
             to="/login"
-            className="bg-gray-900 text-white px-6 py-3 rounded-full text-lg"
+           className="bg-gray-900 text-white px-6 py-3 rounded-sm text-lg"
             onClick={() => setMenuOpen(false)}
           >
             Log in
