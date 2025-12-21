@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import image from '../assets/image.png'
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <nav className='bg-white shadow-sm sticky top-0 z-50'>
      <div className='max-w-7x1 mx-auto px-6'>
@@ -36,8 +37,38 @@ const Navbar = () => {
               Log in
             </Link>
             </div>
+
+          {/* Mobile Menu Button */}
+   
+   <button onClick={() => setMenuOpen(!menuOpen)} 
+   className="md:hidden text-2xl">
+     ☰
+   </button>
+            
       </div>
      </div>
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white px-6 py4 space-y-4 shadow-md">
+          <Link className="block text-blue-600 hover:text-blue-700" to="#">
+            Solutions
+          </Link>
+          <Link className='block text-blue-700' to="#">
+            About Us
+          </Link>
+          <Link className='block text-blue-700' to="#">
+            Contact
+          </Link>
+          <Link
+            to="/login"
+            className="block bg-gray-900 text-white px-5 py-2 rounded-full text-center hover:bg-gray-800 transition"
+          >
+            Log in
+          </Link>
+        </div>
+      )}
+
+
     </nav>
   )
 }
