@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import image from '../assets/image.png'
+import React from "react";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import logo from '../assets/logo.png';
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <nav className='bg-white shadow-sm sticky top-0 z-50'>
-     <div className='max-w-7x1 mx-auto px-6'>
-      <div className='flex justify-between items-center h-16'>
-   {/* Logo */}
+    <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img
-              src={image}
-              alt="SmartCargo Logo"
-              className="h-15 w-15"
-            />
+            <img src={logo} alt="Logo" className="h-8 w-8" />
             <span className="font-bold text-lg text-gray-800">
               Smart<span className="text-blue-600">Cargo</span>
             </span>
           </Link>
-          {/* desktop menu */}
-           <div className="hidden md:flex items-center space-x-8">
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8">
             <Link className="text-gray-600 hover:text-blue-600" to="#">
               Solutions
             </Link>
@@ -30,47 +30,59 @@ const Navbar = () => {
               Contact
             </Link>
 
-              <Link
+            <Link
               to="/login"
               className="bg-gray-900 text-white px-5 py-2 rounded-full hover:bg-gray-800 transition"
             >
               Log in
             </Link>
-            </div>
+          </div>
 
           {/* Mobile Menu Button */}
-   
-   <button onClick={() => setMenuOpen(!menuOpen)} 
-   className="md:hidden text-2xl">
-     ☰
-   </button>
-            
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-2xl z-50"
+          >
+            ☰
+          </button>
+        </div>
       </div>
-     </div>
-      {/* Mobile Menu */}
+
+      {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div className="md:hidden bg-white px-6 py4 space-y-4 shadow-md">
-          <Link className="block text-blue-600 hover:text-blue-700" to="#">
+        <div className="md:hidden fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center space-y-6 z-40">
+          <Link
+            className="text-2xl font-medium text-gray-800"
+            to="#"
+            onClick={() => setMenuOpen(false)}
+          >
             Solutions
           </Link>
-          <Link className='block text-blue-700' to="#">
+          <Link
+            className="text-2xl font-medium text-gray-800"
+            to="#"
+            onClick={() => setMenuOpen(false)}
+          >
             About Us
           </Link>
-          <Link className='block text-blue-700' to="#">
+          <Link
+            className="text-2xl font-medium text-gray-800"
+            to="#"
+            onClick={() => setMenuOpen(false)}
+          >
             Contact
           </Link>
           <Link
             to="/login"
-            className="block bg-gray-900 text-white px-5 py-2 rounded-full text-center hover:bg-gray-800 transition"
+            className="bg-gray-900 text-white px-6 py-3 rounded-full text-lg"
+            onClick={() => setMenuOpen(false)}
           >
             Log in
           </Link>
         </div>
       )}
-
-
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
