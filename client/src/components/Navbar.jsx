@@ -12,8 +12,8 @@ const Navbar = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="Logo" className="h-8 w-8" />
-            <span className="font-bold text-lg text-gray-800">
+            <img src={logo} alt="Logo" className="h-12 w-12" />
+            <span className="font-bold  text-2xl text-gray-800">
               Smart<span className="text-blue-600">Cargo</span>
             </span>
           </Link>
