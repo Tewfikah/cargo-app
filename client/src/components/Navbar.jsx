@@ -17,6 +17,25 @@ const Navbar = () => {
               Smart<span className="text-blue-600">Cargo</span>
             </span>
           </Link>
+          {/* desktop menu */}
+           <div className="hidden md:flex items-center space-x-8">
+            <Link className="text-gray-600 hover:text-blue-600" to="#">
+              Solutions
+            </Link>
+            <Link className="text-gray-600 hover:text-blue-600" to="#">
+              About Us
+            </Link>
+            <Link className="text-gray-600 hover:text-blue-600" to="#">
+              Contact
+            </Link>
+
+              <Link
+              to="/login"
+              className="bg-gray-900 text-white px-5 py-2 rounded-full hover:bg-gray-800 transition"
+            >
+              Log in
+            </Link>
+            </div>
       </div>
      </div>
     </nav>
