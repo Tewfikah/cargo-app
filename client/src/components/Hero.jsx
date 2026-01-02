@@ -10,7 +10,7 @@ const Hero = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
         <div className="max-w-2xl text-white text-center md:text-left mx-auto md:mx-0">
           <h2 className="text-2xl md:text-5xl lg:text-5xl font-bold leading-tight mb-6 drop-shadow-lg">
-            Optimize Your Logistics. <br />
+           እንኳን ደህና መጡ!. <br />
             <span className="text-blue-200">Empowering Ethiopia’s Transport</span>
           </h2>
     {/* Button */}

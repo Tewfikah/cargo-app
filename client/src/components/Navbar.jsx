@@ -1,9 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import logo from '../assets/logo.png';
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+ // Hide navbar for certain pages if needed
+ const hideFooterPaths = [
+    "/dashboard",
+  
+  ];
+  if (hideFooterPaths.includes(location.pathname)) return null;
+
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
