@@ -1,5 +1,5 @@
 import React from "react";
-import KpiCard from "./KpiCard";
+import KPICard from "./KpiCard";
 import {
   Truck,
   Package,
@@ -7,22 +7,23 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-
 const DashboardOverview = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
       
+      {/* አጠቃላይ ጭነቶች */}
       <KPICard
-        title="Total Shipments"
+        title="አጠቃላይ ጭነቶች"
         value="1,245"
         icon={Package}
         iconColor="bg-blue-500"
-        badgeLabel="↑ 7.5% this week"
+        badgeLabel="↑ 7.5% በዚህ ሳምንት"
         type="badge"
       />
 
+      {/* በመንገድ ላይ */}
       <KPICard
-        title="In Transit"
+        title="በመንገድ ላይ"
         value="312"
         icon={Truck}
         iconColor="bg-indigo-500"
@@ -36,8 +37,9 @@ const DashboardOverview = () => {
         ]}
       />
 
+      {/* ተጠባባቂ ጥያቄዎች */}
       <KPICard
-        title="Pending Requests"
+        title="ተጠባባቂ ጥያቄዎች"
         value="18"
         icon={Clock}
         iconColor="bg-amber-500"
@@ -45,8 +47,9 @@ const DashboardOverview = () => {
         progress={64}
       />
 
+      {/* ዛሬ ተደርሷል */}
       <KPICard
-        title="Delivered Today"
+        title="ዛሬ ተደርሷል"
         value="98"
         icon={CheckCircle}
         iconColor="bg-green-500"

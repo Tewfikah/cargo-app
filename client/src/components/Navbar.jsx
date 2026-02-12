@@ -6,12 +6,8 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
- // Hide navbar for certain pages if needed
- const hideFooterPaths = [
-    "/dashboard",
-  
-  ];
-  if (hideFooterPaths.includes(location.pathname)) return null;
+ // Hide navbar on any dashboard route (including nested routes)
+  if (location.pathname.startsWith("/dashboard")) return null;
 
 
   return (

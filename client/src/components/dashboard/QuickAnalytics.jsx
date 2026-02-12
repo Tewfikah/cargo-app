@@ -27,51 +27,31 @@ const AnalyticsCard = ({ title, children }) => {
 const QuickAnalytics = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
+
       {/* Daily Deliveries */}
-      <AnalyticsCard title="Daily Deliveries">
+      <AnalyticsCard title="ዕለታዊ አቅርቦቶች">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={DAILY_DELIVERIES}>
-            <Bar
-              dataKey="value"
-              fill="#3b82f6"
-              radius={[6, 6, 0, 0]}
-            />
+            <Bar dataKey="value" fill="#3b82f6" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </AnalyticsCard>
 
       {/* Revenue vs Cost */}
-      <AnalyticsCard title="Revenue vs Cost">
+      <AnalyticsCard title="ገቢ እና ወጪ">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={REVENUE_VS_COST}>
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="cost"
-              stroke="#f97316"
-              strokeWidth={2}
-              dot={false}
-            />
+            <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="cost" stroke="#f97316" strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </AnalyticsCard>
 
       {/* Fuel Consumption */}
-      <AnalyticsCard title="Fuel Consumption (L)">
+      <AnalyticsCard title="የነዳጅ መጠን (L)">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={FUEL_CONSUMPTION}>
-            <Bar
-              dataKey="value"
-              fill="#60a5fa"
-              radius={[6, 6, 0, 0]}
-            />
+            <Bar dataKey="value" fill="#60a5fa" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </AnalyticsCard>

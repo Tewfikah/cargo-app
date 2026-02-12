@@ -21,14 +21,14 @@ const KPICard = ({
   return (
     <div className="relative bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 group">
       
-      {/* Accent line */}
+      {/* ላይ መስመር */}
       <div className={`absolute top-0 left-0 h-1 w-full ${iconColor} rounded-t-xl`} />
 
-      {/* Header */}
+      {/* ራስ */}
       <div className="flex items-start justify-between mb-4">
         <div>
           <p className="text-sm text-gray-500 font-medium">
-            {title}
+            {title} {/* በዚህ ቦታ አማርኛ ይተረጎማል ወይም dynamic */}
           </p>
           <h3 className="text-3xl font-bold text-gray-900 tracking-tight mt-1">
             {value}
@@ -46,18 +46,18 @@ const KPICard = ({
         )}
       </div>
 
-      {/* Badge */}
+      {/* ባጅ መለያ */}
       {type === "badge" && badgeLabel && (
         <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-          {badgeLabel}
+          {badgeLabel} {/* dynamic ሲሆን እና አማርኛ ይተረጎማል  */}
         </span>
       )}
 
-      {/* Progress */}
+      {/* እድገት መግለጫ */}
       {type === "progress" && (
         <div className="mt-3">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Progress</span>
+            <span>እድገት</span>
             <span>{progress}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -69,7 +69,7 @@ const KPICard = ({
         </div>
       )}
 
-      {/* Donut */}
+      {/* ዶኑት ገበታ */}
       {type === "donut" && (
         <div className="mt-2 h-16 w-16">
           <ResponsiveContainer width="100%" height="100%">
@@ -93,7 +93,7 @@ const KPICard = ({
         </div>
       )}
 
-      {/* Sparkline */}
+      {/* ስፓርክላይን ገበታ */}
       {type === "sparkline" && chartData.length > 0 && (
         <div className="h-12 mt-4">
           <ResponsiveContainer width="100%" height="100%">

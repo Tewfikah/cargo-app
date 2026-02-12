@@ -1,3 +1,4 @@
+import React from 'react';
 import { ClipboardCheck, Package, Truck, ShieldCheck } from 'lucide-react';
 
 export const howItWorksSteps = [

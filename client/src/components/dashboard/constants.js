@@ -22,3 +22,35 @@ export const FUEL_CONSUMPTION = [
   { name: "Truck 3", value: 110 },
   { name: "Truck 4", value: 90 },
 ];
+
+import React from "react";
+import { Users, Truck, User, Settings } from "lucide-react";
+
+export const ROLE_CONFIG = {
+  Dispatcher: {
+    total: 8,
+    icon: React.createElement(User, { className: "w-6 h-6 text-blue-500" }),
+    iconBg: "bg-blue-50",
+    badgeColor: "bg-blue-100 text-blue-700",
+  },
+  Driver: {
+    total: 16,
+    icon: React.createElement(Truck, { className: "w-6 h-6 text-green-500" }),
+    iconBg: "bg-green-50",
+    badgeColor: "bg-green-100 text-green-700",
+  },
+  Customer: {
+    total: 163,
+    icon: React.createElement(Users, { className: "w-6 h-6 text-indigo-500" }),
+    iconBg: "bg-indigo-50",
+    badgeColor: "bg-indigo-100 text-indigo-700",
+  },
+  Admin: {
+    total: 2,
+    icon: React.createElement(Settings, { className: "w-6 h-6 text-red-500" }),
+    iconBg: "bg-red-50",
+    badgeColor: "bg-red-100 text-red-700",
+  },
+};
+
+export const USER_ROLES = ["All", ...Object.keys(ROLE_CONFIG)];

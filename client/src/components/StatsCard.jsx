@@ -11,8 +11,9 @@ const StatsCard = () => {
           </svg>
         </span>
       </div>
+
       <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold leading-tight">
-        Shipments in 2024 with 99.9% on-time delivery.
+        በ2024 ዓ.ም የተከናወኑ ጭነቶች፣ 99.9% በሰዓቱ የደረሱ
       </p>
       
       <div className="flex -space-x-2 pt-2">
@@ -21,9 +22,10 @@ const StatsCard = () => {
             key={i}
             className="w-8 h-8 rounded-full border-2 border-white ring-2 ring-transparent" 
             src={`https://i.pravatar.cc/100?u=${i + 10}`} 
-            alt="User" 
+            alt="ተጠቃሚ" 
           />
         ))}
+
         <div className="w-8 h-8 rounded-full border-2 border-white bg-purple-100 flex items-center justify-center text-[8px] font-bold text-blue-600">
           +4k
         </div>

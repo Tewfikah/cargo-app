@@ -1,35 +1,36 @@
 import React from "react";
+
 const shipments = [
   {
     id: "SH-1021",
     client: "Addis Logistics",
-    origin: "Addis Ababa",
-    destination: "Dire Dawa",
-    status: "In Transit",
+    origin: "አዲስ አበባ",
+    destination: "ድሬ ዳዋ",
+    status: "በመጓጓዣ ላይ",
     date: "2026-01-01",
   },
   {
     id: "SH-1022",
     client: "Ethio Cargo",
-    origin: "Adama",
-    destination: "Mekelle",
-    status: "Delivered",
+    origin: "አዳማ",
+    destination: "መቀሌ",
+    status: "ተልኳል",
     date: "2026-01-01",
   },
   {
     id: "SH-1023",
     client: "Blue Nile Transport",
-    origin: "Bahir Dar",
-    destination: "Gondar",
-    status: "Pending",
+    origin: "ባህር ዳር",
+    destination: "ጎንደር",
+    status: "በመጠባበቅ",
     date: "2026-01-02",
   },
 ];
 
 const statusStyles = {
-  "In Transit": "bg-blue-100 text-blue-700",
-  Delivered: "bg-green-100 text-green-700",
-  Pending: "bg-amber-100 text-amber-700",
+  "በመጓጓዣ ላይ": "bg-blue-100 text-blue-700",
+  "ተልኳል": "bg-green-100 text-green-700",
+  "በመጠባበቅ": "bg-amber-100 text-amber-700",
 };
 
 const ShipmentsTable = () => {
@@ -39,10 +40,10 @@ const ShipmentsTable = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
-          Recent Shipments
+          የቅርብ ጊዜ ጭነቶች
         </h3>
         <button className="text-sm text-blue-600 hover:underline">
-          View all
+          ሁሉንም ይመልከቱ
         </button>
       </div>
 
@@ -51,11 +52,11 @@ const ShipmentsTable = () => {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-gray-500 border-b">
-              <th className="py-3">Shipment ID</th>
-              <th>Client</th>
-              <th>Route</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th className="py-3">የጭነት መለያ</th>
+              <th>ደንበኛ</th>
+              <th>መንገድ</th>
+              <th>ሁኔታ</th>
+              <th>ቀን</th>
             </tr>
           </thead>
 

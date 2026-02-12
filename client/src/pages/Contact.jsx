@@ -42,11 +42,13 @@ const ContactPage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const analyzeMessage = async () => {
+  const analyzeMessage = () => {
     if (!formData.message || formData.message.length < 5) return;
     setIsAnalyzing(true);
     setTimeout(() => {
-      setSmartAnalysis('Urgent shipment, likely Express Air needed.');
+      setSmartAnalysis(
+        'አስቸኳይ ጭነት መሆኑን ያመለክታል፣ የፈጣን አየር መጓጓዣ ሊያስፈልግ ይችላል።'
+      );
       setIsAnalyzing(false);
     }, 1000);
   };
@@ -56,30 +58,33 @@ const ContactPage = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      alert('Message sent successfully! Our SmartCargo team will contact you soon.');
+      alert('መልዕክትዎ በተሳካ ሁኔታ ተልኳል! የSmartCargo ቡድናችን በቅርቡ ያግኙዎታል።');
       setFormData({ name: '', email: '', subject: '', message: '' });
     }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center pt-16 px-4 pb-12">
+    <div className="min-h-screen flex flex-col items-center pt-16 px-4 pb-12 
+  bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+
+
       {/* Header */}
       <div className="text-center max-w-2xl mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Get In Touch</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">Contact US</h1>
         <p className="text-gray-500 text-sm leading-relaxed px-4">
-          High-quality logistics solutions and reliable supply chain networks for your business.
+          ለንግድዎ የተመረጡ የሎጂስቲክስ መፍትሄዎችና የታመነ የአቅርቦት ሰንሰለት አውታረ መረብ።
         </p>
       </div>
 
       {/* Main Card */}
-      <div className="w-full max-w-5xl bg-white rounded-[40px] shadow-2xl hover:shadow-2xl/40 transition-shadow flex flex-col md:flex-row overflow-hidden min-h-[550px]">
-        
+      <div className="w-full max-w-5xl bg-white rounded-[40px] shadow-2xl flex flex-col md:flex-row overflow-hidden min-h-[550px]">
+
         {/* Left Panel */}
         <div className="md:w-1/3 bg-blue-200 p-10 flex flex-col text-blue-600 m-3 rounded-[32px] justify-between relative shadow-lg">
           <div>
-            <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
+            <h2 className="text-2xl font-bold mb-4">Contact</h2>
             <p className="text-blue-600/80 text-xs mb-10 leading-relaxed font-medium">
-              Premium logistics solutions and global tracking for over 500+ international routes.
+              ከ500+ በላይ ዓለም አቀፍ መንገዶች ላይ የሚሰሩ ዘመናዊ የሎጂስቲክስ መፍትሄዎችና የቀጥታ ክትትል።
             </p>
 
             <div className="space-y-6">
@@ -88,21 +93,23 @@ const ContactPage = () => {
                   <Phone size={18} />
                 </div>
                 <div className="text-sm font-medium">
-                  <p>+8801779717686</p>
-                  <p>+988678363868</p>
+                  <p>+251 58 220 1234</p>
+                  <p>+251 91 234 5678</p>
                 </div>
               </div>
+
               <div className="flex items-center gap-4">
                 <div className="bg-blue-600/10 p-2.5 rounded-lg shadow-md">
                   <Mail size={18} />
                 </div>
                 <p className="text-sm font-medium">support@smartcargo.com</p>
               </div>
+
               <div className="flex items-center gap-4">
                 <div className="bg-blue-600/10 p-2.5 rounded-lg shadow-md">
                   <MapPin size={18} />
                 </div>
-                <p className="text-sm font-medium">New York, USA</p>
+                <p className="text-sm font-medium">ባህር ዳር፣ ኢትዮጵያ</p>
               </div>
             </div>
           </div>
@@ -112,31 +119,48 @@ const ContactPage = () => {
         <div className="md:w-2/3 p-10 md:p-14 relative shadow-lg rounded-xl">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-              <InputField label="Your Name" placeholder="Write your name" name="name" value={formData.name} onChange={handleInputChange}/>
-              <InputField label="Your Email" placeholder="Write your email" name="email" type="email" value={formData.email} onChange={handleInputChange}/>
+              <InputField label="ስምዎ" placeholder="ስምዎን ያስገቡ" name="name" value={formData.name} onChange={handleInputChange}/>
+              <InputField label="ኢሜይልዎ" placeholder="ኢሜይልዎን ያስገቡ" name="email" type="email" value={formData.email} onChange={handleInputChange}/>
             </div>
 
-            <InputField label="Your Subject" placeholder="Write your subject" name="subject" value={formData.subject} onChange={handleInputChange}/>
+            <InputField label="ርዕሰ ጉዳይ" placeholder="ርዕሰ ጉዳዩን ያስገቡ" name="subject" value={formData.subject} onChange={handleInputChange}/>
 
             <div className="relative group">
-              <InputField label="Message" placeholder="Write here your message" name="message" multiline value={formData.message} onChange={handleInputChange}/>
-              <button type="button" onClick={analyzeMessage} disabled={isAnalyzing || !formData.message} className="absolute right-0 top-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50">
+              <InputField
+                label="መልዕክት"
+                placeholder="መልዕክትዎን እዚህ ይጻፉ"
+                name="message"
+                multiline
+                value={formData.message}
+                onChange={handleInputChange}
+              />
+              <button
+                type="button"
+                onClick={analyzeMessage}
+                disabled={isAnalyzing || !formData.message}
+                className="absolute right-0 top-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-800 disabled:opacity-50"
+              >
                 {isAnalyzing ? <Loader2 className="animate-spin" size={12}/> : <MessageSquareText size={12}/>}
-                Smart Analysis
+                የስማርት ትንታኔ
               </button>
             </div>
 
             {smartAnalysis && (
               <div className="mb-6 p-3 bg-blue-50 rounded-xl border border-blue-200 shadow-inner">
-                <p className="text-[10px] font-bold uppercase mb-1 text-blue-600">AI Logistics Preview:</p>
-                <p className="text-xs italic font-medium text-blue-800">"{smartAnalysis}"</p>
+                <p className="text-[10px] font-bold uppercase mb-1 text-blue-600">
+                  የAI የሎጂስቲክስ ቅድመ እይታ፦
+                </p>
+                <p className="text-xs italic font-medium text-blue-800">
+                  "{smartAnalysis}"
+                </p>
               </div>
             )}
 
             <div className="mt-8">
-              <button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2 transition-all transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-70">
+              <button type="submit" disabled={isSubmitting}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2 disabled:opacity-70">
                 {isSubmitting ? <Loader2 className="animate-spin" size={18}/> : <Send size={18}/>}
-                {isSubmitting ? 'Sending...' : 'Send Message'}
+                {isSubmitting ? 'በመላክ ላይ...' : 'መልዕክት ላክ'}
               </button>
             </div>
           </form>
@@ -145,12 +169,13 @@ const ContactPage = () => {
 
       {/* Footer */}
       <div className="mt-12 text-gray-400 text-[10px] font-medium tracking-widest uppercase flex items-center gap-4">
-        <span>© 2024 SmartCargo Global Logistics</span>
+        <span>© 2018 SmartCargo ዓለም አቀፍ ሎጂስቲክስ</span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span>Privacy Policy</span>
+        <span>የግላዊነት ፖሊሲ</span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span>Terms of Service</span>
+        <span>የአገልግሎት መመሪያዎች</span>
       </div>
+
     </div>
   );
 };

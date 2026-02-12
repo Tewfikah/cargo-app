@@ -2,25 +2,23 @@ import image from '../image1.jpg';
 import image3 from '../image3.jpg';
 import image4 from '../image4.jpg';
 
-
-
 export const services = [
   {
-    title: "Land Freight Transportation",
+    title: "የመሬት ጭነት መጓጓዣ",
     description:
-      "Reliable and optimized road transport services across regions.",
-   image: image
+      "በክልሎች መሰረት የታመነና የተሻሻለ የመንገድ መጓጓዣ አገልግሎቶች።",
+    image: image
   },
   {
-    title: "Smart Cargo Tracking",
+    title: "የስማርት ጭነት እይታ",
     description:
-      "Real-time monitoring of cargo with GPS-enabled tracking systems.",
+      "ከ GPS ስር የሚታዩ የጭነት መቆጣጠሪያ ስርዓቶች ጋር በቅኝ ጊዜ መቆጣጠር።",
     image: image3
   },
   {
-    title: "Fleet & Container Management",
+    title: "የተሽከርካሪና ኮንቴነር አስተዳደር",
     description:
-      "Centralized management of vehicles, drivers, and containers.",
-   image: image4
+      "የተሽከርካሪዎች፣ አወዳድሮችና ኮንቴነሮች ማእከላዊ አስተዳደር።",
+    image: image4
   },
 ];
