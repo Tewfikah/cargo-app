@@ -31,7 +31,8 @@ export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
       email,
       role,
       status,
-      avatar: user?.avatar || "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=256&h=256&fit=crop",
+      // Do not store personal photos — use role icons in the table instead.
+      avatar: null,
     };
     onSave && onSave(payload);
     onClose && onClose();

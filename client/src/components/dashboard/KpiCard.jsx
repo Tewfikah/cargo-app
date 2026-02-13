@@ -30,18 +30,24 @@ const KPICard = ({
           <p className="text-sm text-gray-500 font-medium">
             {title} {/* በዚህ ቦታ አማርኛ ይተረጎማል ወይም dynamic */}
           </p>
-          <h3 className="text-3xl font-bold text-gray-900 tracking-tight mt-1">
-            {value}
-          </h3>
+            <h3 className="text-3xl font-bold text-gray-900 tracking-tight mt-1">
+              {value}
+            </h3>
+
+            {badgeLabel && (
+              <div className="mt-2">
+                <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-50 text-slate-700 border border-slate-100">
+                  {badgeLabel}
+                </span>
+              </div>
+            )}
         </div>
 
         {Icon && (
-          <div
-            className={`p-3 rounded-xl ${iconColor} bg-opacity-10 group-hover:scale-110 transition`}
-          >
-            <Icon
-              className={`w-6 h-6 ${iconColor.replace("bg-", "text-")}`}
-            />
+          <div className={`p-3 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition`}>
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColor} text-white`}> 
+              <Icon className="w-5 h-5" />
+            </div>
           </div>
         )}
       </div>

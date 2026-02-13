@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ChevronDown,
   ChevronUp,
@@ -14,14 +14,7 @@ import {
   X,
 } from 'lucide-react';
 
-const INITIAL_VEHICLES = [
-  { id: 'TRK-1021', type: 'Box Truck', status: 'Available', driver: 'Mike D.', lastSeen: '5 mins ago' },
-  { id: 'TRK-1008', type: 'Semi-Trailer', status: 'In Transit', driver: 'Sarah K.', lastSeen: '15 mins ago' },
-  { id: 'TRK-1007', type: 'Box Truck', status: 'Available', driver: 'Unassigned', lastSeen: '25 mins ago' },
-  { id: 'TRK-1003', type: 'Reefer Truck', status: 'Maintenance', driver: 'Unassigned', lastSeen: '20 mins ago', maintenanceNote: '5 Awaiting Parts' },
-  { id: 'TRK-1015', type: 'Semi-Trailer', status: 'In Transit', driver: 'Unassigned', lastSeen: '40 mins ago' },
-  { id: 'TRK-1012', type: 'Box Truck', status: 'Maintenance', driver: 'Unassigned', lastSeen: '50 mins ago' },
-];
+// Vehicles are provided by parent when available. Component keeps only UI state.
 
 const PAGE_SIZE = 5;
 
@@ -31,8 +24,7 @@ const statusClasses = {
   Maintenance: 'bg-amber-100 text-amber-700 border-amber-200',
 };
 
-const VehicleTable = ({ onMaintenanceClick = () => {} }) => {
-  const [vehicles, setVehicles] = useState(INITIAL_VEHICLES);
+const VehicleTable = ({ onMaintenanceClick = () => {}, vehicles = [], setVehicles = () => {} }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -50,7 +42,8 @@ const VehicleTable = ({ onMaintenanceClick = () => {} }) => {
   };
 
   const filteredAndSortedVehicles = useMemo(() => {
-    let result = vehicles.filter((vehicle) => {
+    const list = vehicles || [];
+    let result = list.filter((vehicle) => {
       const s = searchTerm.toLowerCase();
       const matchesSearch =
         vehicle.id.toLowerCase().includes(s) ||
@@ -92,12 +85,12 @@ const VehicleTable = ({ onMaintenanceClick = () => {} }) => {
     e.preventDefault();
     if (!newVehicle.id) return;
     const vehicle = { ...newVehicle, status: 'Available', lastSeen: 'Just now' };
-    setVehicles((prev) => [vehicle, ...prev]);
+    setVehicles((prev) => [vehicle, ...(prev || [])]);
     setIsAddModalOpen(false);
     setNewVehicle({ id: '', type: 'Box Truck', driver: 'Unassigned' });
   };
 
-  const types = ['All', ...Array.from(new Set(vehicles.map((v) => v.type)))];
+  const types = ['All', ...Array.from(new Set((vehicles || []).map((v) => v.type)))];
   const statuses = ['All', 'Available', 'In Transit', 'Maintenance'];
 
   return (

@@ -1,17 +1,26 @@
 import React from 'react';
 import { Truck, CheckCircle, Wrench, Users, Plus } from 'lucide-react';
 
-const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) => {
-  const safeTotal = total || 1;
-  const availPct = Math.round((available / safeTotal) * 100);
-  const driversPct = Math.round((drivers / safeTotal) * 100);
+const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0, vehicles = [] }) => {
+  // If `vehicles` is provided, derive stats from it so cards reflect table data.
+  const useVehicles = Array.isArray(vehicles) && vehicles.length > 0;
+  const totalCount = useVehicles ? vehicles.length : total;
+  const availableCount = useVehicles ? vehicles.filter((v) => v.status === 'Available').length : available;
+  const maintenanceCount = useVehicles ? vehicles.filter((v) => v.status === 'Maintenance').length : maintenance;
+  const driversCount = useVehicles
+    ? new Set(vehicles.filter((v) => v.driver && v.driver !== 'Unassigned').map((v) => v.driver)).size
+    : drivers;
 
-  const cardBase = "bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow";
+  const safeTotal = totalCount || 1;
+  const availPct = Math.round((availableCount / safeTotal) * 100);
+  const driversPct = Math.round((driversCount / safeTotal) * 100);
+
+  const cardBase = "bg-white p-4 rounded-2xl shadow-lg border border-slate-200 flex flex-col justify-between relative overflow-hidden group hover:shadow-xl transition-shadow";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Total Vehicles */}
-      <div className={cardBase}>
+      <div className={`${cardBase} border-l-4 border-blue-200`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
@@ -19,7 +28,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
             </div>
             <div>
               <div className="text-xs text-slate-500 font-medium">Total Vehicles</div>
-              <div className="text-2xl font-bold text-slate-800">{total}</div>
+              <div className="text-2xl font-bold text-slate-800">{totalCount}</div>
             </div>
           </div>
           <button className="p-1.5 bg-blue-50 rounded-md text-blue-600 hover:bg-blue-100">
@@ -36,7 +45,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
       </div>
 
       {/* Available Vehicles */}
-      <div className={cardBase}>
+      <div className={`${cardBase} border-l-4 border-emerald-200`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
@@ -44,7 +53,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
             </div>
             <div>
               <div className="text-xs text-slate-500 font-medium">Available</div>
-              <div className="text-2xl font-bold text-slate-800">{available}</div>
+              <div className="text-2xl font-bold text-slate-800">{availableCount}</div>
             </div>
           </div>
           <div className="text-sm font-semibold text-emerald-600">{availPct}%</div>
@@ -59,7 +68,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
       </div>
 
       {/* Maintenance */}
-      <div className={cardBase}>
+      <div className={`${cardBase} border-l-4 border-amber-200`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
@@ -67,10 +76,10 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
             </div>
             <div>
               <div className="text-xs text-slate-500 font-medium">In Maintenance</div>
-              <div className="text-2xl font-bold text-slate-800">{maintenance}</div>
+              <div className="text-2xl font-bold text-slate-800">{maintenanceCount}</div>
             </div>
           </div>
-          <div className="text-xs text-amber-700 font-medium">{maintenance > 0 ? `${Math.round((maintenance / safeTotal) * 100)}%` : "0%"}</div>
+          <div className="text-xs text-amber-700 font-medium">{maintenanceCount > 0 ? `${Math.round((maintenanceCount / safeTotal) * 100)}%` : "0%"}</div>
         </div>
 
         <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
@@ -80,7 +89,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
       </div>
 
       {/* Active Drivers */}
-      <div className={cardBase}>
+      <div className={`${cardBase} border-l-4 border-indigo-200`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
@@ -88,7 +97,7 @@ const StatsCards = ({ total = 0, available = 0, maintenance = 0, drivers = 0 }) 
             </div>
             <div>
               <div className="text-xs text-slate-500 font-medium">Active Drivers</div>
-              <div className="text-2xl font-bold text-slate-800">{drivers}</div>
+              <div className="text-2xl font-bold text-slate-800">{driversCount}</div>
             </div>
           </div>
           <div className="text-sm font-semibold text-indigo-600">{driversPct}%</div>

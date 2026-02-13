@@ -137,10 +137,10 @@ const Shipments = () => {
       <h1 className="text-2xl font-bold text-slate-800">Shipment Overview</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Shipments" value="1,248" type="Pending" color="#6366f1" />
-        <StatCard label="In Transit" value="42" type="In Transit" color="#3b82f6" />
-        <StatCard label="Delivered" value="892" type="Delivered" color="#10b981" />
-        <StatCard label="Delayed" value="15" type="Delayed" color="#f43f5e" />
+        <StatCard label="Total Shipments" type="Total" color="#6366f1" shipments={shipments} />
+        <StatCard label="In Transit" type="In Transit" color="#3b82f6" shipments={shipments} />
+        <StatCard label="Delivered" type="Delivered" color="#10b981" shipments={shipments} />
+        <StatCard label="Delayed" type="Delayed" color="#f43f5e" shipments={shipments} />
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-[600px]">

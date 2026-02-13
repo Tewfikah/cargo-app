@@ -1,5 +1,5 @@
 import React from "react";
-import { X, History } from "lucide-react";
+import { X, History, User } from "lucide-react";
 
 export const ActivityLogsPanel = ({ onClose, logs = [] }) => {
   return (
@@ -27,11 +27,9 @@ export const ActivityLogsPanel = ({ onClose, logs = [] }) => {
               key={log.id}
               className="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100"
             >
-              <img
-                src={log.userAvatar}
-                alt={log.userName}
-                className="w-10 h-10 rounded-full border border-slate-200"
-              />
+              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-600">
+                <User className="w-5 h-5" />
+              </div>
 
               <div className="flex-1">
                 <p className="text-sm text-slate-700">

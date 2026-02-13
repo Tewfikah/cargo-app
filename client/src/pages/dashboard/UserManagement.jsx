@@ -7,11 +7,11 @@ import UserModal from "../../components/dashboard/user-management/UserModal";
 
 const UserManagement = () => {
   const initialUsers = [
-    { id: "u1", name: "Alice Johnson", role: "Dispatcher", status: "Active", email: "alice@example.com", avatar: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=256&h=256&fit=crop" },
-    { id: "u2", name: "Bob Smith", role: "Driver", status: "Inactive", email: "bob@example.com", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=256&h=256&fit=crop" },
-    { id: "u3", name: "Carol Lee", role: "Customer", status: "Active", email: "carol@example.com", avatar: "https://images.unsplash.com/photo-1545996124-1b8d5b5b6f6d?w=256&h=256&fit=crop" },
-    { id: "u4", name: "Daniel Green", role: "Admin", status: "Active", email: "daniel@example.com", avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=256&h=256&fit=crop" },
-    { id: "u5", name: "Eve Turner", role: "Driver", status: "Active", email: "eve@example.com", avatar: "https://images.unsplash.com/photo-1544006659-f0b21884ce1d?w=256&h=256&fit=crop" },
+    { id: "u1", name: "Alice Johnson", role: "Dispatcher", status: "Active", email: "alice@example.com", avatar: null },
+    { id: "u2", name: "Bob Smith", role: "Driver", status: "Inactive", email: "bob@example.com", avatar: null },
+    { id: "u3", name: "Carol Lee", role: "Customer", status: "Active", email: "carol@example.com", avatar: null },
+    { id: "u4", name: "Daniel Green", role: "Admin", status: "Active", email: "daniel@example.com", avatar: null },
+    { id: "u5", name: "Eve Turner", role: "Driver", status: "Active", email: "eve@example.com", avatar: null },
   ];
 
   const [users, setUsers] = useState(initialUsers);
@@ -23,8 +23,8 @@ const UserManagement = () => {
   ]);
 
   const [logs, setLogs] = useState([
-    { id: "l1", userName: "Alice Johnson", userAvatar: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=256&h=256&fit=crop", action: "edited user profile", timestamp: "2 hours ago" },
-    { id: "l2", userName: "Bob Smith", userAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=256&h=256&fit=crop", action: "reset password", timestamp: "Yesterday" },
+    { id: "l1", userName: "Alice Johnson", userAvatar: null, action: "edited user profile", timestamp: "2 hours ago" },
+    { id: "l2", userName: "Bob Smith", userAvatar: null, action: "reset password", timestamp: "Yesterday" },
   ]);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -64,7 +64,7 @@ const UserManagement = () => {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">User Management</h1>
-      <KPICards />
+      <KPICards users={users} onAddUser={handleAddUser} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">

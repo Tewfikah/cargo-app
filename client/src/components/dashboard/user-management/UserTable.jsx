@@ -76,8 +76,8 @@ export const UserTable = (props) => {
     },
   ];
 
-  // Local state for table features
-  const [localUsers] = useState(users && users.length > 0 ? users : SAMPLE_USERS);
+  // Use `users` prop directly so parent updates (add/remove) are reflected immediately.
+  const localUsers = users && users.length > 0 ? users : SAMPLE_USERS;
   const [query, setQuery] = useState(searchTerm || "");
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState("asc");
@@ -279,11 +279,9 @@ export const UserTable = (props) => {
                   {/* Name */}
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-8 h-8 rounded-full border"
-                      />
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                        {roleCfg.icon}
+                      </div>
                       <span className="text-sm font-semibold text-slate-700">
                         {user.name}
                       </span>
