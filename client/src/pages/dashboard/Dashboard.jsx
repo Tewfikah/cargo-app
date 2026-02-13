@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import QuickAnalytics from "../../components/dashboard/QuickAnalytics";
 import LiveMap from "../../components/dashboard/LiveMap";
 import ShipmentsTable from "../../components/dashboard/ShipmentsTable";
@@ -6,13 +7,13 @@ import ShipmentsHeader from "../../components/dashboard/ShipmentsHeader";
 
 
 const Dashboard = () => {
-  const [showNewShipment, setShowNewShipment] = useState(false);
+  const navigate = useNavigate();
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [showAssignDriver, setShowAssignDriver] = useState(false);
   const [showFleetOverview, setShowFleetOverview] = useState(false);
 
   const handleExport = () => alert("Export started — implement CSV export when ready.");
-  const handleCreate = () => setShowNewShipment(true);
+  const handleCreate = () => navigate('/dashboard/shipments-orders');
   const handleBulkUpload = () => setShowBulkUpload(true);
   const handleAssignDriver = () => setShowAssignDriver(true);
   const handleFleetOverview = () => setShowFleetOverview(true);
@@ -35,13 +36,29 @@ const Dashboard = () => {
 
       <ShipmentsHeader onCreate={handleCreate} onBulkUpload={handleBulkUpload} onRangeChange={(r) => console.log('range', r)} />
 
-      {/* Analytics Section */}
-      <div className="mt-6">
-        <QuickAnalytics />
+      {/* Full-width Live Map + Analytics */}
+      <div className="mt-6 space-y-6">
+        <div className="bg-gradient-to-r from-sky-50 to-white rounded-3xl shadow-xl border border-slate-200 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-bold text-slate-800">Live Map</h3>
+            <p className="text-sm text-slate-500">Real-time vehicle locations</p>
+          </div>
+          <div className="h-[520px] md:h-[420px] w-full rounded-xl overflow-hidden border border-slate-100">
+            <LiveMap />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-slate-800">Quick Analytics</h3>
+            <p className="text-sm text-slate-500">Key metrics at a glance</p>
+          </div>
+          <QuickAnalytics />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-        <div className="xl:col-span-2">
+        <div className="xl:col-span-3">
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 h-full">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -54,38 +71,11 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        <aside className="xl:col-span-1 space-y-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 h-80">
-            <h3 className="text-sm font-bold text-slate-800 mb-2">Live Map</h3>
-            <LiveMap />
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4">
-            <h3 className="text-sm font-bold text-slate-800 mb-2">Shortcuts</h3>
-            <div className="flex flex-col gap-3">
-              <button onClick={handleCreate} className="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">Create Shipment</button>
-              <button onClick={handleAssignDriver} className="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">Assign Driver</button>
-              <button onClick={handleFleetOverview} className="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">Fleet Overview</button>
-            </div>
-          </div>
-        </aside>
+        
       </div>
     </div>
 
     {/* Modals (simple demos) */}
-    {showNewShipment && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-          <h3 className="text-lg font-bold mb-3">New Shipment</h3>
-          <p className="text-sm text-slate-500 mb-4">Quick create a shipment (demo). Click Save to close.</p>
-          <div className="flex justify-end gap-2">
-            <button onClick={() => setShowNewShipment(false)} className="px-4 py-2 rounded border">Cancel</button>
-            <button onClick={() => { setShowNewShipment(false); alert('Shipment created (demo)'); }} className="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-          </div>
-        </div>
-      </div>
-    )}
 
     {showBulkUpload && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
