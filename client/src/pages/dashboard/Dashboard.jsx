@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import QuickAnalytics from "../../components/dashboard/QuickAnalytics";
 import LiveMap from "../../components/dashboard/LiveMap";
 import ShipmentsTable from "../../components/dashboard/ShipmentsTable";
@@ -7,6 +8,7 @@ import ShipmentsHeader from "../../components/dashboard/ShipmentsHeader";
 
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [showAssignDriver, setShowAssignDriver] = useState(false);
@@ -24,13 +26,13 @@ const Dashboard = () => {
       {/* Hero / Page header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-1">Overview of shipments, fleet and key metrics.</p>
+          <h1 className="text-3xl font-extrabold text-slate-900">{t('dashboard.title')}</h1>
+          <p className="text-sm text-slate-500 mt-1">{t('dashboard.subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={handleExport} className="text-sm px-3 py-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow">Export</button>
-          <button onClick={handleCreate} className="text-sm px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:shadow-lg">New Shipment</button>
+          <button onClick={handleExport} className="text-sm px-3 py-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow">{t('dashboard.export')}</button>
+          <button onClick={handleCreate} className="text-sm px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:shadow-lg">{t('dashboard.newShipment')}</button>
         </div>
       </div>
 
@@ -40,8 +42,8 @@ const Dashboard = () => {
       <div className="mt-6 space-y-6">
         <div className="bg-gradient-to-r from-sky-50 to-white rounded-3xl shadow-xl border border-slate-200 p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-bold text-slate-800">Live Map</h3>
-            <p className="text-sm text-slate-500">Real-time vehicle locations</p>
+            <h3 className="text-lg font-bold text-slate-800">{t('dashboard.liveMap')}</h3>
+            <p className="text-sm text-slate-500">{t('dashboard.liveMapDesc')}</p>
           </div>
           <div className="h-[520px] md:h-[420px] w-full rounded-xl overflow-hidden border border-slate-100">
             <LiveMap />

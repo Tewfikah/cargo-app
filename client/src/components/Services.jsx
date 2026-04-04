@@ -1,23 +1,26 @@
 import React from 'react'
-import { services } from '../assets/data/servicesData'
+import { useTranslation } from 'react-i18next';
+import { getServices } from '../assets/data/servicesData'
 
 const Services = () => {
+  const { t } = useTranslation();
+  const services = getServices(t);
+
   return (
     <section className='py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'>
       <div className='max-w-7xl mx-auto px-6'>
         {/* Section Header */}
         <div className='text-center mb-14'>
           <span className="text-blue-500 font-semibold uppercase text-2xl">
-            Our Services
+            {t('services.title')}
           </span>
 
           <h2 className="text-3xl md:text-4xl font-bold mt-3">
-            የተለያዩ የሎጂስቲክስ አገልግሎቶች
+            {t('services.subtitle')}
           </h2>
 
           <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-            SmartCargo የመጓጓዣ ስርዓቶችን እና የጭነት አስተዳደርን ለማሻሻል የተነደፉ
-            ዘመናዊ ዲጂታል የሎጂስቲክስ መፍትሄዎችን ከመጀመሪያ እስከ መጨረሻ ይሰጣል።
+            {t('services.description')}
           </p>
         </div>
 

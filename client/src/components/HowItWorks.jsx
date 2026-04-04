@@ -1,10 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import { howItWorksSteps } from '../assets/data/howItWorksData.jsx';
+import { useTranslation } from 'react-i18next';
+import { getHowItWorksSteps } from '../assets/data/howItWorksData.jsx';
 import StepCard from './StepCard';
 
 const HowItWorks = () => {
+  const { t } = useTranslation();
+  const howItWorksSteps = getHowItWorksSteps(t);
+
   return (
     <section className="relative py-20 md:py-28 bg-white overflow-hidden">
       {/* Background blobs */}
@@ -29,13 +33,13 @@ const HowItWorks = () => {
           className="text-center md:text-left mb-16"
         >
           <span className="text-sm font-bold tracking-wider text-dodgerblue-600 uppercase mb-2 inline-block">
-            Workflow Excellence
+            {t('howItWorks.workflow')}
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4">
-            Shipping cargo with <span className="text-dodgerblue-500">zero friction</span>
+            {t('howItWorks.title')} <span className="text-dodgerblue-500">{t('howItWorks.highlight')}</span>
           </h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto md:mx-0">
-            Fast, secure, and transparent logistics solutions from pickup to delivery.
+            {t('howItWorks.description')}
           </p>
         </motion.div>
 
@@ -71,10 +75,10 @@ const HowItWorks = () => {
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-2">
-                Optimize Your Supply Chain
+                {t('howItWorks.optimizeTitle')}
               </h3>
               <p className="text-base md:text-lg text-slate-300">
-                Speak with a logistics specialist today for a customized plan.
+                {t('howItWorks.optimizeDescription')}
               </p>
             </div>
             <div className="flex gap-4 mt-4 md:mt-0">
@@ -82,14 +86,14 @@ const HowItWorks = () => {
                 whileHover={{ scale: 1.05 }}
                 className="px-6 py-3 bg-dodgerblue-500 hover:bg-dodgerblue-400 font-bold rounded-2xl flex items-center gap-2 transition-all"
               >
-                Book a Demo
+                {t('howItWorks.bookDemo')}
                 <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 className="px-6 py-3 bg-white/10 hover:bg-white/20 font-bold rounded-2xl border border-white/20 transition-all"
               >
-                View Pricing
+                {t('howItWorks.viewPricing')}
               </motion.button>
             </div>
           </div>

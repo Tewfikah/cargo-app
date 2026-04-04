@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import logo from "../assets/logo.png";
 import { Mail, Lock, User } from "lucide-react";
 
 const Login = () => {
+  const { t } = useTranslation();
   const [isSignup, setIsSignup] = useState(false);
 
   return (
@@ -16,7 +18,7 @@ const Login = () => {
 
         {/* Title */}
         <h2 className="text-2xl font-bold text-center mb-8">
-          {isSignup ? "Sign Up" : "Login"}
+          {isSignup ? t('login.signup') : t('login.login')}
         </h2>
 
         {/* Form */}
@@ -28,7 +30,7 @@ const Login = () => {
               <User className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="ሙሉ ስም"
+                placeholder={t('login.namePlaceholder')}
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
                 required
               />
@@ -40,7 +42,7 @@ const Login = () => {
             <Mail className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="email"
-              placeholder="ኢሜይል"
+              placeholder={t('login.emailPlaceholder')}
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
               required
             />
@@ -51,7 +53,7 @@ const Login = () => {
             <Lock className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="password"
-              placeholder="የሚስጥር ቁልፍ"
+              placeholder={t('login.passwordPlaceholder')}
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
               required
             />
@@ -62,7 +64,7 @@ const Login = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
           >
-            {isSignup ? "Sign Up" : "Login"}
+            {isSignup ? t('login.register') : t('login.login')}
           </button>
         </form>
 
@@ -71,26 +73,26 @@ const Login = () => {
           {!isSignup ? (
             <>
               <p className="mb-2">
-                አካውንት የለዎትም?{" "}
+                {t('login.noAccount')}{" "}
                 <button
                   onClick={() => setIsSignup(true)}
                   className="text-blue-600 hover:underline"
                 >
-                  ይመዝገቡ
+                  {t('login.register')}
                 </button>
               </p>
               <a href="#" className="text-blue-600 hover:underline">
-                የሚስጥር ቁልፍ ረሱ?
+                {t('login.forgot')}
               </a>
             </>
           ) : (
             <p>
-              አካውንት አለዎት?{" "}
+              {t('login.haveAccount')}{" "}
               <button
                 onClick={() => setIsSignup(false)}
                 className="text-blue-600 hover:underline"
               >
-                ግባ
+                {t('login.login')}
               </button>
             </p>
           )}

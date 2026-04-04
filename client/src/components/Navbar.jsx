@@ -1,10 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import logo from '../assets/logo.png';
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+
+  const { t } = useTranslation();
 
  // Hide navbar on any dashboard route (including nested routes)
   if (location.pathname.startsWith("/dashboard")) return null;
@@ -26,20 +29,20 @@ const Navbar = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <Link className="text-gray-600 hover:text-blue-600" to="#">
-              Solutions
+              {t('navbar.solutions')}
             </Link>
             <Link className="text-gray-600 hover:text-blue-600" to="/about">
-              About Us
+              {t('navbar.about')}
             </Link>
             <Link className="text-gray-600 hover:text-blue-600" to="/contact">
-              Contact
+              {t('navbar.contact')}
             </Link>
 
             <Link
               to="/login"
               className="bg-gray-900 text-white px-5 py-2 rounded-sm hover:bg-gray-800 transition"
             >
-              Log in
+              {t('navbar.login')}
             </Link>
           </div>
 
