@@ -1,55 +1,90 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { useTranslation } from 'react-i18next';
-import logo from '../assets/logo.png';
+import { useTranslation } from "react-i18next";
+import { Sun, Moon, Monitor } from "lucide-react";
+import { useTheme } from "../ThemeContext";
+import logo from "../assets/logo.png";
+
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-
   const { t } = useTranslation();
+  const { theme, setTheme } = useTheme();
 
- // Hide navbar on any dashboard route (including nested routes)
   if (location.pathname.startsWith("/dashboard")) return null;
 
-
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 border-b border-transparent bg-white/95 shadow-sm backdrop-blur dark:bg-slate-900/95 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-16">
-
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img src={logo} alt="Logo" className="h-12 w-12" />
-            <span className="font-bold  text-2xl text-gray-800">
+            <span className="text-2xl font-bold text-gray-800 dark:text-white">
               Smart<span className="text-blue-600">Cargo</span>
             </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link className="text-gray-600 hover:text-blue-600" to="#">
-              {t('navbar.solutions')}
+            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="#">
+              {t("navbar.solutions")}
             </Link>
-            <Link className="text-gray-600 hover:text-blue-600" to="/about">
-              {t('navbar.about')}
+            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="/about">
+              {t("navbar.about")}
             </Link>
-            <Link className="text-gray-600 hover:text-blue-600" to="/contact">
-              {t('navbar.contact')}
+            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="/contact">
+              {t("navbar.contact")}
             </Link>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white p-1 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+              <button
+                onClick={() => setTheme("light")}
+                className={`rounded-xl p-2 transition ${
+                  theme === "light"
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                }`}
+              >
+                <Sun size={18} />
+              </button>
+
+              <button
+                onClick={() => setTheme("dark")}
+                className={`rounded-xl p-2 transition ${
+                  theme === "dark"
+                    ? "bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                }`}
+              >
+                <Moon size={18} />
+              </button>
+
+              <button
+                onClick={() => setTheme("system")}
+                className={`rounded-xl p-2 transition ${
+                  theme === "system"
+                    ? "bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                }`}
+              >
+                <Monitor size={18} />
+              </button>
+            </div>
 
             <Link
               to="/login"
-              className="bg-gray-900 text-white px-5 py-2 rounded-sm hover:bg-gray-800 transition"
+              className="rounded-md bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700"
             >
-              {t('navbar.login')}
+              {t("navbar.login")}
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-2xl z-50"
+            className="z-50 text-2xl text-gray-800 dark:text-white md:hidden"
           >
             ☰
           </button>
@@ -58,34 +93,47 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center space-y-6 z-40">
+        <div className="fixed inset-0 z-40 flex flex-col items-center justify-center space-y-6 bg-white/95 dark:bg-slate-900/95 md:hidden">
           <Link
-            className="text-2xl font-medium text-gray-800"
+            className="text-2xl font-medium text-gray-800 dark:text-white"
             to="#"
             onClick={() => setMenuOpen(false)}
           >
-            Solutions
+            {t("navbar.solutions")}
           </Link>
           <Link
-            className="text-2xl font-medium text-gray-800"
-            to="#"
+            className="text-2xl font-medium text-gray-800 dark:text-white"
+            to="/about"
             onClick={() => setMenuOpen(false)}
           >
-            About Us
+            {t("navbar.about")}
           </Link>
           <Link
-            className="text-2xl font-medium text-gray-800"
-            to="#"
+            className="text-2xl font-medium text-gray-800 dark:text-white"
+            to="/contact"
             onClick={() => setMenuOpen(false)}
           >
-            Contact
+            {t("navbar.contact")}
           </Link>
+
+          <div className="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-800">
+            <button onClick={() => setTheme("light")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+              <Sun size={18} />
+            </button>
+            <button onClick={() => setTheme("dark")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+              <Moon size={18} />
+            </button>
+            <button onClick={() => setTheme("system")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+              <Monitor size={18} />
+            </button>
+          </div>
+
           <Link
             to="/login"
-           className="bg-gray-900 text-white px-6 py-3 rounded-sm text-lg"
+            className="rounded-md bg-blue-600 px-6 py-3 text-lg text-white"
             onClick={() => setMenuOpen(false)}
           >
-            Log in
+            {t("navbar.login")}
           </Link>
         </div>
       )}

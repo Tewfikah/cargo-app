@@ -7,8 +7,10 @@ import {
   Settings,
   LogOut,
   X,
+  Menu,
 } from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
+import LogoutModal from "../LogoutModal";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -19,13 +21,15 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false); // Desktop collapse
-  const [mobileOpen, setMobileOpen] = useState(false); // Mobile open
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   const sidebarContent = (
     <div
-      className={`min-h-screen flex flex-col bg-[#1e3a8a] text-white transition-all duration-300
-        ${collapsed ? "w-20" : "w-64"} lg:w-auto`}
+      className={`min-h-screen flex flex-col bg-[#1e3a8a] text-white transition-all duration-300 ${
+        collapsed ? "w-20" : "w-64"
+      } lg:w-auto`}
     >
       {/* Logo / Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-blue-900/50">
@@ -37,18 +41,19 @@ const Sidebar = () => {
             </span>
           )}
         </div>
+
         {/* Close button for mobile */}
-        <button
-          className="lg:hidden"
-          onClick={() => setMobileOpen(false)}
-        >
+        <button className="lg:hidden" onClick={() => setMobileOpen(false)}>
           <X className="w-6 h-6" />
         </button>
       </div>
 
       {/* Collapse toggle desktop */}
-      <div className="flex justify-end px-4 py-2 hidden lg:flex">
-        <button onClick={() => setCollapsed(!collapsed)} className="text-blue-200 hover:text-white">
+      <div className="hidden lg:flex justify-end px-4 py-2">
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-blue-200 hover:text-white"
+        >
           {collapsed ? "▶" : "◀"}
         </button>
       </div>
@@ -67,7 +72,7 @@ const Sidebar = () => {
                   : "text-blue-100 hover:bg-blue-800/50 hover:text-white"
               }`
             }
-            onClick={() => setMobileOpen(false)} // Close mobile sidebar on click
+            onClick={() => setMobileOpen(false)}
           >
             <item.icon className="w-5 h-5" />
             {!collapsed && <span>{item.label}</span>}
@@ -77,7 +82,10 @@ const Sidebar = () => {
 
       {/* Footer / Logout */}
       <div className="p-4 border-t border-blue-900/50">
-        <button className="flex items-center gap-3 w-full px-4 py-3 text-blue-100 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all">
+        <button
+          onClick={() => setIsLogoutOpen(true)}
+          className="flex items-center gap-3 w-full px-4 py-3 text-blue-100 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all"
+        >
           <LogOut className="w-5 h-5" />
           {!collapsed && <span className="font-medium">Sign Out</span>}
         </button>
@@ -90,7 +98,7 @@ const Sidebar = () => {
       {/* Mobile toggle button */}
       <div className="lg:hidden p-2">
         <button onClick={() => setMobileOpen(true)} className="text-blue-700">
-          <X size={28} /> {/* Or any menu icon you want */}
+          <Menu size={28} />
         </button>
       </div>
 
@@ -104,9 +112,17 @@ const Sidebar = () => {
             className="bg-black/30 w-full"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute left-0 top-0 h-full">{sidebarContent}</div>
+          <div className="absolute left-0 top-0 h-full z-50">
+            {sidebarContent}
+          </div>
         </div>
       )}
+
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={isLogoutOpen}
+        onClose={() => setIsLogoutOpen(false)}
+      />
     </>
   );
 };
