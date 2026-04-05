@@ -8,8 +8,13 @@ const icons = {
   Delayed: AlertCircle,
 };
 
-// `StatCard` can derive values from a `shipments` array when provided.
-export const StatCard = ({ label = "Status", value = "0", type = "Pending", color = "#6366f1", shipments = [] }) => {
+export const StatCard = ({
+  label = "Status",
+  value = "0",
+  type = "Pending",
+  color = "#6366f1",
+  shipments = [],
+}) => {
   const Icon = icons[type] || Truck;
 
   const total = Array.isArray(shipments) ? shipments.length : 0;
@@ -30,23 +35,26 @@ export const StatCard = ({ label = "Status", value = "0", type = "Pending", colo
 
   return (
     <div
-      className="group relative bg-white p-6 rounded-2xl shadow-lg border border-slate-200 transition-transform duration-300 overflow-hidden"
+      className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg transition-transform duration-300 dark:border-slate-700 dark:bg-slate-800"
       style={{ borderLeft: `4px solid ${color}33` }}
     >
-
       <div
-        className="absolute -right-6 -top-6 w-32 h-32 rounded-full opacity-[0.08] transition-transform duration-500 group-hover:scale-125"
+        className="absolute -right-6 -top-6 h-32 w-32 rounded-full opacity-[0.08] transition-transform duration-500 group-hover:scale-125"
         style={{ backgroundColor: color }}
       />
 
-      <div className="relative z-10 flex justify-between items-start mb-6">
+      <div className="relative z-10 mb-6 flex items-start justify-between">
         <div>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{label}</p>
-          <h3 className="text-3xl font-extrabold text-slate-800">{numericValue.toLocaleString()}</h3>
+          <p className="mb-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
+            {label}
+          </p>
+          <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white">
+            {numericValue.toLocaleString()}
+          </h3>
         </div>
 
         <div
-          className="p-3 rounded-xl shadow-md transition-transform duration-300 group-hover:rotate-6"
+          className="rounded-xl p-3 shadow-md transition-transform duration-300 group-hover:rotate-6"
           style={{ backgroundColor: `${color}15`, color: color }}
         >
           <Icon size={24} strokeWidth={2.5} />
@@ -54,20 +62,22 @@ export const StatCard = ({ label = "Status", value = "0", type = "Pending", colo
       </div>
 
       <div className="relative z-10">
-        <div className="flex justify-between items-center mb-2 text-xs">
-          <span className="text-slate-400 font-medium">Activity</span>
-          <span className="font-bold" style={{ color }}>{percentage}%</span>
+        <div className="mb-2 flex items-center justify-between text-xs">
+          <span className="font-medium text-slate-400 dark:text-slate-300">Activity</span>
+          <span className="font-bold" style={{ color }}>
+            {percentage}%
+          </span>
         </div>
-        <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+        <div className="h-2 w-full overflow-hidden rounded-full border border-slate-100 bg-slate-50 dark:border-slate-700 dark:bg-slate-700">
           <div
-            className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+            className="relative h-full overflow-hidden rounded-full transition-all duration-1000 ease-out"
             style={{
               backgroundColor: color,
               width: `${percentage}%`,
-              boxShadow: `0 6px 18px ${color}22`
+              boxShadow: `0 6px 18px ${color}22`,
             }}
           >
-            <div className="absolute inset-0 bg-white/20 w-full h-full" />
+            <div className="absolute inset-0 h-full w-full bg-white/20" />
           </div>
         </div>
       </div>

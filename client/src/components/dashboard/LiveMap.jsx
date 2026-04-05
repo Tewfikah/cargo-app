@@ -1,42 +1,23 @@
-import  React from "react";
+import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 const vehicleLocations = [
-  {
-    id: 1,
-    name: "Truck A",
-    position: [9.03, 38.74], // Addis Ababa
-    status: "In Transit",
-  },
-  {
-    id: 2,
-    name: "Truck B",
-    position: [8.98, 38.79],
-    status: "Delivering",
-  },
-  {
-    id: 3,
-    name: "Truck C",
-    position: [9.05, 38.76],
-    status: "Idle",
-  },
+  { id: 1, name: "Truck A", position: [9.03, 38.74], status: "In Transit" },
+  { id: 2, name: "Truck B", position: [8.98, 38.79], status: "Delivering" },
+  { id: 3, name: "Truck C", position: [9.05, 38.76], status: "Idle" },
 ];
 
 const LiveMap = () => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
         Live Fleet Map
       </h3>
 
-      <div className="h-80 w-full rounded-xl overflow-hidden">
-        <MapContainer
-          center={[9.03, 38.74]}
-          zoom={12}
-          className="h-full w-full"
-        >
+      <div className="h-80 w-full overflow-hidden rounded-xl">
+        <MapContainer center={[9.03, 38.74]} zoom={12} className="h-full w-full">
           <TileLayer
-            attribution='&copy; OpenStreetMap contributors'
+            attribution="&copy; OpenStreetMap contributors"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 

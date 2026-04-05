@@ -1,51 +1,79 @@
 import React, { useState } from "react";
-import { Upload, Plus, Truck, PackageCheck, Clock, AlertTriangle, ChevronDown } from "lucide-react";
+import {
+  Upload,
+  Plus,
+  Truck,
+  PackageCheck,
+  Clock,
+  AlertTriangle,
+  ChevronDown,
+} from "lucide-react";
 import KPICard from "./KpiCard";
 
-const ShipmentsHeader = ({ onCreate = () => {}, onBulkUpload = () => {}, onRangeChange = () => {} }) => {
+const ShipmentsHeader = ({
+  onCreate = () => {},
+  onBulkUpload = () => {},
+  onRangeChange = () => {},
+}) => {
   const [range, setRange] = useState("7d");
 
   return (
     <div className="space-y-6">
-
       {/* Header Row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-slate-50 to-white shadow-sm">
-            <PackageCheck className="w-6 h-6 text-slate-700" />
+          <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white p-2 shadow-sm dark:from-slate-700 dark:to-slate-800">
+            <PackageCheck className="h-6 w-6 text-slate-700 dark:text-white" />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Shipments & Orders</h1>
-            <p className="text-sm text-slate-500">Monitor shipments, track issues and manage orders.</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Shipments & Orders
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-300">
+              Monitor shipments, track issues and manage orders.
+            </p>
           </div>
         </div>
 
-          <div className="flex items-center gap-3">
-          <div className="flex items-center bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm">
-            <select value={range} onChange={(e) => { setRange(e.target.value); onRangeChange(e.target.value); }} className="appearance-none bg-transparent pr-6">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+            <select
+              value={range}
+              onChange={(e) => {
+                setRange(e.target.value);
+                onRangeChange(e.target.value);
+              }}
+              className="appearance-none bg-transparent pr-6 outline-none"
+            >
               <option value="24h">24h</option>
               <option value="7d">7d</option>
               <option value="30d">30d</option>
               <option value="90d">90d</option>
             </select>
-            <ChevronDown className="w-4 h-4 text-slate-400" />
+            <ChevronDown className="h-4 w-4 text-slate-400" />
           </div>
 
-          <button onClick={onBulkUpload} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-50 transition">
-            <Upload className="w-4 h-4" />
+          <button
+            onClick={onBulkUpload}
+            className="flex items-center gap-2 rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/20"
+          >
+            <Upload className="h-4 w-4" />
             Bulk Upload
           </button>
 
-          <button onClick={onCreate} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            <Plus className="w-4 h-4" />
+          <button
+            onClick={onCreate}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" />
             Create Shipment
           </button>
         </div>
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <KPICard
           title="Pending Shipments"
           value="8"

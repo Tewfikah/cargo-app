@@ -24,38 +24,37 @@ export const ShipmentTable = ({
   onAssignDriver,
 }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startResult =
-    totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const startResult = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endResult = Math.min(currentPage * itemsPerPage, totalItems);
 
   const getStatusStyles = (status) => {
     switch (status) {
       case "In Transit":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
       case "Delivered":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200";
+        return "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800";
       case "Pending":
-        return "bg-amber-100 text-amber-700 border-amber-200";
+        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800";
       case "Delayed":
-        return "bg-rose-100 text-rose-700 border-rose-200";
+        return "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600";
     }
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 lg:px-6 lg:py-4 border-b border-slate-100 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex overflow-x-auto no-scrollbar gap-1">
+      <div className="flex flex-col justify-between gap-4 border-b border-slate-100 bg-slate-50/30 px-4 py-3 dark:border-slate-700 dark:bg-slate-700/20 md:flex-row md:items-center lg:px-6 lg:py-4">
+        <div className="no-scrollbar flex gap-1 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => onFilterChange(tab)}
-              className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all ${
+              className={`rounded-full border px-4 py-1.5 text-xs font-bold transition-all ${
                 activeFilter === tab
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               }`}
             >
               {tab}
@@ -64,14 +63,11 @@ export const ShipmentTable = ({
         </div>
 
         <div className="relative w-full md:w-64">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            size={14}
-          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
           <input
             type="text"
             placeholder="Search table..."
-            className="w-full bg-white border border-slate-200 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 rounded-lg py-1.5 pl-9 pr-4 text-xs outline-none transition-all"
+            className="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-9 pr-4 text-xs outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -82,8 +78,8 @@ export const ShipmentTable = ({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px] text-left">
           <thead>
-            <tr className="bg-slate-50 text-slate-500 text-[10px] font-bold uppercase border-b border-slate-100">
-              <th className="px-6 py-4 w-32">Order ID</th>
+            <tr className="border-b border-slate-100 bg-slate-50 text-[10px] font-bold uppercase text-slate-500 dark:border-slate-700 dark:bg-slate-700/40 dark:text-slate-300">
+              <th className="w-32 px-6 py-4">Order ID</th>
               <th className="px-6 py-4">Customer</th>
               <th className="px-6 py-4">Status & Driver</th>
               <th className="px-6 py-4">ETA</th>
@@ -91,23 +87,20 @@ export const ShipmentTable = ({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-slate-100 bg-white">
+          <tbody className="divide-y divide-slate-100 bg-white dark:divide-slate-700 dark:bg-slate-800">
             {data.length > 0 ? (
               data.map((row) => (
-                <tr
-                  key={row.id}
-                  className="hover:bg-blue-50/30 transition-colors"
-                >
-                  <td className="px-6 py-5 font-bold text-slate-800">
+                <tr key={row.id} className="transition-colors hover:bg-blue-50/30 dark:hover:bg-slate-700/30">
+                  <td className="px-6 py-5 font-bold text-slate-800 dark:text-white">
                     {row.id}
                   </td>
 
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                        <MapPin size={16} />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700">
+                        <MapPin size={16} className="dark:text-slate-200" />
                       </div>
-                      <span className="text-sm font-semibold text-slate-700">
+                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-100">
                         {row.customer}
                       </span>
                     </div>
@@ -116,19 +109,17 @@ export const ShipmentTable = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-0.5 text-[10px] font-bold border rounded ${getStatusStyles(
-                          row.status
-                        )}`}
+                        className={`rounded border px-2 py-0.5 text-[10px] font-bold ${getStatusStyles(row.status)}`}
                       >
                         {row.status}
                       </span>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-400 dark:text-slate-300">
                         — {row.driver}
                       </span>
                     </div>
                   </td>
 
-                  <td className="px-6 py-5 italic text-slate-500">
+                  <td className="px-6 py-5 italic text-slate-500 dark:text-slate-300">
                     {row.eta}
                   </td>
 
@@ -136,17 +127,17 @@ export const ShipmentTable = ({
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => onAssignDriver(row.id)}
-                        className="px-3 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded hover:bg-slate-200"
+                        className="rounded bg-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                       >
                         Assign
                       </button>
                       <button
                         onClick={() => onUpdateStatus(row.id)}
-                        className="px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded border border-blue-100 hover:bg-blue-600 hover:text-white"
+                        className="rounded border border-blue-100 bg-blue-50 px-3 py-1.5 text-[10px] font-bold text-blue-600 hover:bg-blue-600 hover:text-white dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
                       >
                         Status
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:bg-slate-100 rounded">
+                      <button className="rounded p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300">
                         <MoreVertical size={16} />
                       </button>
                     </div>
@@ -156,7 +147,7 @@ export const ShipmentTable = ({
             ) : (
               <tr>
                 <td colSpan={5} className="px-6 py-20 text-center">
-                  <div className="flex flex-col items-center text-slate-400">
+                  <div className="flex flex-col items-center text-slate-400 dark:text-slate-300">
                     <Truck size={40} className="mb-4 opacity-20" />
                     <p>No shipments found</p>
                     <button
@@ -164,7 +155,7 @@ export const ShipmentTable = ({
                         onFilterChange("All");
                         onSearchChange("");
                       }}
-                      className="mt-2 text-blue-600 text-xs font-bold"
+                      className="mt-2 text-xs font-bold text-blue-600 dark:text-blue-400"
                     >
                       Clear all filters
                     </button>
@@ -177,7 +168,7 @@ export const ShipmentTable = ({
       </div>
 
       {/* Pagination */}
-      <div className="p-4 bg-white border-t border-slate-100 flex justify-between text-xs font-semibold text-slate-500">
+      <div className="flex justify-between border-t border-slate-100 bg-white p-4 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
         <span>
           Showing {startResult} to {endResult} of {totalItems}
         </span>
@@ -186,7 +177,7 @@ export const ShipmentTable = ({
           <button
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="p-1.5 border rounded disabled:opacity-30"
+            className="rounded border p-1.5 disabled:opacity-30 dark:border-slate-600"
           >
             <ChevronLeft size={16} />
           </button>
@@ -195,10 +186,10 @@ export const ShipmentTable = ({
             <button
               key={p}
               onClick={() => onPageChange(p)}
-              className={`w-7 h-7 rounded text-[11px] font-bold ${
+              className={`h-7 w-7 rounded text-[11px] font-bold ${
                 p === currentPage
                   ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-100"
+                  : "hover:bg-slate-100 dark:hover:bg-slate-700"
               }`}
             >
               {p}
@@ -206,11 +197,9 @@ export const ShipmentTable = ({
           ))}
 
           <button
-            onClick={() =>
-              onPageChange(Math.min(totalPages, currentPage + 1))
-            }
+            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages || totalPages === 0}
-            className="p-1.5 border rounded disabled:opacity-30"
+            className="rounded border p-1.5 disabled:opacity-30 dark:border-slate-600"
           >
             <ChevronRight size={16} />
           </button>

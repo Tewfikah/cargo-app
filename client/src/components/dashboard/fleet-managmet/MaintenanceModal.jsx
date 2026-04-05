@@ -1,71 +1,76 @@
-import React from 'react';
-import { X, Wrench, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import React from "react";
+import { X, Wrench, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const mockLogs = [
-  { id: '1', date: '2024-04-20', description: 'Oil change and brake inspection', status: 'Completed' },
-  { id: '2', date: '2024-03-15', description: 'Replaced windshield and air filters', status: 'Awaiting Parts' },
-  { id: '3', date: '2024-02-28', description: 'Engine diagnostics due to check engine light', status: 'In Progress' },
+  { id: "1", date: "2024-04-20", description: "Oil change and brake inspection", status: "Completed" },
+  { id: "2", date: "2024-03-15", description: "Replaced windshield and air filters", status: "Awaiting Parts" },
+  { id: "3", date: "2024-02-28", description: "Engine diagnostics due to check engine light", status: "In Progress" },
 ];
 
 const mockActivities = [
-  { id: 'a1', description: 'Brakes replaced, tires rotated', date: '01/09/2024' },
-  { id: 'a2', description: 'Routine inspection completed', date: '11/10/2023' },
-  { id: 'a3', description: 'Fuel filter replaced', date: '09/10/2023' },
+  { id: "a1", description: "Brakes replaced, tires rotated", date: "01/09/2024" },
+  { id: "a2", description: "Routine inspection completed", date: "11/10/2023" },
+  { id: "a3", description: "Fuel filter replaced", date: "09/10/2023" },
 ];
 
 const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => {
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'Completed':
-        return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'Awaiting Parts':
-        return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'In Progress':
-        return 'bg-blue-100 text-blue-700 border-blue-200';
+      case "Completed":
+        return "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800";
+      case "Awaiting Parts":
+        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800";
+      case "In Progress":
+        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600";
     }
   };
 
-  // If rendered inline (as a side panel), don't include the backdrop or fixed wrapper
   if (inline) {
     return (
-      <div className="bg-white shadow-lg rounded-2xl overflow-hidden border border-slate-200 w-full">
-        <div className="p-4 md:p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-700 md:p-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <Wrench className="w-5 h-5 text-slate-600" />
+            <div className="rounded-lg bg-slate-100 p-2 dark:bg-slate-700">
+              <Wrench className="h-5 w-5 text-slate-600 dark:text-slate-200" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-800">Maintenance</h3>
-              <p className="text-xs text-slate-500 uppercase">{vehicleId || 'Select a vehicle'}</p>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Maintenance</h3>
+              <p className="text-xs uppercase text-slate-500 dark:text-slate-300">
+                {vehicleId || "Select a vehicle"}
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="p-4 md:p-6 space-y-4">
+        <div className="space-y-4 p-4 dark:text-slate-200 md:p-6">
           {vehicleId ? (
             <>
-              <div className="text-sm text-slate-600">Showing maintenance log for <span className="font-medium text-slate-800">{vehicleId}</span></div>
-              <div className="overflow-hidden rounded-lg border border-slate-200">
+              <div className="text-sm text-slate-600 dark:text-slate-300">
+                Showing maintenance log for{" "}
+                <span className="font-medium text-slate-800 dark:text-white">{vehicleId}</span>
+              </div>
+
+              <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
                 <table className="w-full text-left">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                  <thead className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50">
                     <tr>
-                      <th className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                      <th className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Description</th>
-                      <th className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Date</th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Description</th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                     {mockLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50">
-                        <td className="px-3 py-2 text-slate-500 text-sm">{log.date}</td>
-                        <td className="px-3 py-2 text-slate-700 text-sm">{log.description}</td>
+                      <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                        <td className="px-3 py-2 text-sm text-slate-500 dark:text-slate-300">{log.date}</td>
+                        <td className="px-3 py-2 text-sm text-slate-700 dark:text-slate-200">{log.description}</td>
                         <td className="px-3 py-2">
-                          <span className={`px-2 py-1 rounded-md text-[10px] font-bold border ${getStatusBadge(log.status)}`}>
+                          <span className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(log.status)}`}>
                             {log.status}
                           </span>
                         </td>
@@ -74,14 +79,27 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
                   </tbody>
                 </table>
               </div>
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-sm text-blue-800">Next service in 1,200 miles</div>
+
+              <div className="rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200">
+                Next service in 1,200 miles
+              </div>
+
               <div className="flex gap-2">
-                <button onClick={onClose} className="flex-1 px-3 py-2 rounded-md border">Close</button>
-                <button className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md">Complete Log</button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 rounded-md border px-3 py-2 dark:border-slate-600 dark:text-white"
+                >
+                  Close
+                </button>
+                <button className="flex-1 rounded-md bg-blue-600 px-3 py-2 text-white hover:bg-blue-700">
+                  Complete Log
+                </button>
               </div>
             </>
           ) : (
-            <div className="text-sm text-slate-500">Select a vehicle from the table to view maintenance details here.</div>
+            <div className="text-sm text-slate-500 dark:text-slate-300">
+              Select a vehicle from the table to view maintenance details here.
+            </div>
           )}
         </div>
       </div>
@@ -90,52 +108,42 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop (no blur, subtle dim) */}
-      <div
-        className="absolute inset-0 bg-slate-900/40"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-slate-900/40" onClick={onClose} />
 
-      {/* Modal (centered, smaller) */}
-      <div className="relative w-full max-w-xl max-h-[80vh] bg-white shadow-2xl flex flex-col rounded-2xl overflow-hidden border border-slate-200 animate-in fade-in duration-200">
-
-        {/* Header */}
-        <header className="p-4 md:p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="relative flex max-h-[80vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+        <header className="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-700 md:p-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <Wrench className="w-5 h-5 text-slate-600" />
+            <div className="rounded-lg bg-slate-100 p-2 dark:bg-slate-700">
+              <Wrench className="h-5 w-5 text-slate-600 dark:text-slate-200" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Maintenance Log</h2>
-              <p className="text-xs text-slate-500 uppercase">{vehicleId}</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white">Maintenance Log</h2>
+              <p className="text-xs uppercase text-slate-500 dark:text-slate-300">{vehicleId}</p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
-            <X className="w-6 h-6" />
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+            <X className="h-6 w-6" />
           </button>
         </header>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-
-          {/* Logs Table */}
-          <div className="overflow-hidden rounded-lg border border-slate-200">
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 md:p-6">
+          <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
             <table className="w-full text-left">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50">
                 <tr>
-                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Description</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Description</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {mockLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-slate-500 text-sm">{log.date}</td>
-                    <td className="px-4 py-3 text-slate-700 text-sm">{log.description}</td>
+                  <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-300">{log.date}</td>
+                    <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{log.description}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 rounded-md text-[10px] font-bold border ${getStatusBadge(log.status)}`}>
+                      <span className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(log.status)}`}>
                         {log.status}
                       </span>
                     </td>
@@ -145,44 +153,44 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
             </table>
           </div>
 
-          {/* Activities */}
           <section>
-            <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Recent Activities
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
+              <Clock className="h-4 w-4" /> Recent Activities
             </h3>
             <ul className="space-y-3">
               {mockActivities.map((activity) => (
-                <li key={activity.id} className="flex justify-between text-sm text-slate-600">
+                <li key={activity.id} className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
                   <span>{activity.description}</span>
-                  <span className="text-xs text-slate-400">{activity.date}</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-400">{activity.date}</span>
                 </li>
               ))}
             </ul>
           </section>
 
-          {/* Info Card */}
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4">
-            <AlertCircle className="w-5 h-5 text-blue-600" />
+          <div className="flex gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+            <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-300" />
             <div>
-              <p className="font-semibold text-blue-900">Upcoming Service</p>
-              <p className="text-blue-700 text-sm">
+              <p className="font-semibold text-blue-900 dark:text-blue-200">Upcoming Service</p>
+              <p className="text-sm text-blue-700 dark:text-blue-300">
                 Next scheduled maintenance is in 1,200 miles or on June 15, 2024.
               </p>
             </div>
           </div>
-
         </div>
 
-        {/* Footer */}
-        <footer className="p-4 border-t border-slate-100 bg-slate-50">
+        <footer className="border-t border-slate-100 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-700/40">
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 px-4 py-2 rounded-md border">Close</button>
-            <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md flex items-center justify-center gap-2">
-              <CheckCircle2 className="w-4 h-4" /> Complete Log
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-md border px-4 py-2 dark:border-slate-600 dark:text-white"
+            >
+              Close
+            </button>
+            <button className="flex flex-1 items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700">
+              <CheckCircle2 className="h-4 w-4" /> Complete Log
             </button>
           </div>
         </footer>
-
       </div>
     </div>
   );
