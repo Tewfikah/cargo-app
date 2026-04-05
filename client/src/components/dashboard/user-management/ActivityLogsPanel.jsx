@@ -3,53 +3,61 @@ import { X, History, User } from "lucide-react";
 
 export const ActivityLogsPanel = ({ onClose, logs = [] }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full">
+    <div className="w-full overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-slate-800">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-100">
+      <div className="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-700">
         <div className="flex items-center space-x-2">
-          <History className="w-5 h-5 text-blue-600" />
-          <h2 className="text-lg font-bold text-slate-800">Activity Logs</h2>
+          <History className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">
+            Activity Logs
+          </h2>
         </div>
 
         <button
           onClick={onClose}
-          className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+          className="rounded-full p-2 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700"
         >
-          <X className="w-5 h-5 text-slate-400" />
+          <X className="h-5 w-5 text-slate-400 dark:text-slate-300" />
         </button>
       </div>
 
       {/* Body */}
-      <div className="p-4 max-h-[60vh] overflow-y-auto space-y-3">
+      <div className="max-h-[60vh] space-y-3 overflow-y-auto p-4">
         {logs.length > 0 ? (
           logs.map((log) => (
             <div
               key={log.id}
-              className="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100"
+              className="flex items-center space-x-3 rounded-lg border border-transparent p-2 transition-colors hover:border-slate-100 hover:bg-slate-50 dark:hover:border-slate-700 dark:hover:bg-slate-700/30"
             >
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-600">
-                <User className="w-5 h-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-200">
+                <User className="h-5 w-5" />
               </div>
 
               <div className="flex-1">
-                <p className="text-sm text-slate-700">
-                  <span className="font-bold text-slate-900">{log.userName}</span>{" "}
+                <p className="text-sm text-slate-700 dark:text-slate-200">
+                  <span className="font-bold text-slate-900 dark:text-white">
+                    {log.userName}
+                  </span>{" "}
                   {log.action}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">{log.timestamp}</p>
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-400">
+                  {log.timestamp}
+                </p>
               </div>
             </div>
           ))
         ) : (
-          <div className="p-4 text-center text-slate-400">No activity logs.</div>
+          <div className="p-4 text-center text-slate-400 dark:text-slate-300">
+            No activity logs.
+          </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="p-4 bg-slate-50 text-center">
+      <div className="bg-slate-50 p-4 text-center dark:bg-slate-700/40">
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-all"
+          className="rounded-lg bg-slate-200 px-4 py-2 font-semibold text-slate-700 transition-all hover:bg-slate-300 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500"
         >
           Close
         </button>

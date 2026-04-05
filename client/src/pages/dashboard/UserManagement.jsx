@@ -45,28 +45,39 @@ const UserManagement = () => {
       if (exists) return prev.map((p) => (p.id === u.id ? u : p));
       return [u, ...prev];
     });
-    // add simple activity log
+
     setLogs((prev) => [
-      { id: `log_${Date.now()}`, userName: u.name, userAvatar: u.avatar, action: exists ? "updated user" : "added user", timestamp: "Just now" },
+      {
+        id: `log_${Date.now()}`,
+        userName: u.name,
+        userAvatar: u.avatar,
+        action: exists ? "updated user" : "added user",
+        timestamp: "Just now",
+      },
       ...prev,
     ]);
   };
 
   const handlePermissionChange = (role, key) => {
-    setPermissions((prev) => prev.map((p) => {
-      if (p.role !== role) return p;
-      return { ...p, permissions: { ...p.permissions, [key]: !p.permissions[key] } };
-    }));
+    setPermissions((prev) =>
+      prev.map((p) => {
+        if (p.role !== role) return p;
+        return { ...p, permissions: { ...p.permissions, [key]: !p.permissions[key] } };
+      })
+    );
   };
 
   const handleViewAllLogs = () => setShowLogsModal(true);
 
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-6">User Management</h1>
+    <div className="min-h-screen bg-slate-50 p-6 transition-colors duration-300 dark:bg-slate-900">
+      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-white">
+        User Management
+      </h1>
+
       <KPICards users={users} onAddUser={handleAddUser} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <UserTable users={users} onAddUser={handleAddUser} onEditUser={handleEditUser} />
         </div>
@@ -81,10 +92,26 @@ const UserManagement = () => {
         </div>
       </div>
 
-      <UserModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSave={handleSaveUser} />
-      <UserModal isOpen={showEditModal} onClose={() => { setShowEditModal(false); setEditingUser(null); }} user={editingUser} onSave={handleSaveUser} />
-      <ActivityLogsModal isOpen={showLogsModal} onClose={() => setShowLogsModal(false)} logs={logs} />
-    </>
+      <UserModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleSaveUser}
+      />
+      <UserModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingUser(null);
+        }}
+        user={editingUser}
+        onSave={handleSaveUser}
+      />
+      <ActivityLogsModal
+        isOpen={showLogsModal}
+        onClose={() => setShowLogsModal(false)}
+        logs={logs}
+      />
+    </div>
   );
 };
 
