@@ -20,9 +20,11 @@ import {
 
 const AnalyticsCard = ({ title, children, className = '' }) => {
   return (
-    <div className={`bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition ${className}`}>
-      <h4 className="text-sm font-bold text-gray-800 mb-3">{title}</h4>
-      <div className="h-24">{children}</div>
+    <div className={`bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col ${className}`}>
+      <div className="flex items-center justify-between mb-6">
+        <h4 className="text-base font-bold text-slate-800">{title}</h4>
+      </div>
+      <div className="flex-1 h-72 w-full">{children}</div>
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Services = () => {
             {t('services.subtitle')}
           </h2>
 
-          <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+          <p className="text-black mt-4 max-w-2xl mx-auto">
             {t('services.description')}
           </p>
         </div>
