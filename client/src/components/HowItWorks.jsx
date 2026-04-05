@@ -10,15 +10,15 @@ const HowItWorks = () => {
   const howItWorksSteps = getHowItWorksSteps(t);
 
   return (
-    <section className="relative overflow-hidden bg-white py-20 transition-colors duration-300 dark:bg-slate-800 md:py-28">
-      {/* Background blobs */}
+    <section className="relative overflow-hidden bg-slate-50 py-20 transition-colors duration-300 dark:bg-slate-900 md:py-28">
+      {/* Background blobs (softer in dark mode) */}
       <motion.div
-        className="absolute top-[-15%] right-[-5%] h-[400px] w-[400px] rounded-full bg-dodgerblue-100/30 blur-[100px] -z-10 dark:bg-blue-400/10"
+        className="absolute top-[-15%] right-[-5%] h-[400px] w-[400px] rounded-full bg-blue-400/20 blur-[100px] -z-10 dark:bg-blue-500/10"
         animate={{ rotate: [0, 20, 0] }}
         transition={{ repeat: Infinity, duration: 20, ease: 'linear' }}
       />
       <motion.div
-        className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-dodgerblue-50/50 blur-[120px] -z-10 dark:bg-sky-300/10"
+        className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-indigo-400/20 blur-[120px] -z-10 dark:bg-indigo-500/10"
         animate={{ rotate: [0, -15, 0] }}
         transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
       />
@@ -32,18 +32,18 @@ const HowItWorks = () => {
           transition={{ duration: 0.8 }}
           className="mb-16 text-center md:text-left"
         >
-          <span className="mb-2 inline-block text-sm font-bold uppercase tracking-wider text-dodgerblue-600 dark:text-blue-300">
+          <span className="mb-2 inline-block text-sm font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             {t('howItWorks.workflow')}
           </span>
 
-          <h2 className="mb-4 text-4xl font-extrabold leading-tight dark:text-white md:text-5xl">
+          <h2 className="mb-4 text-4xl font-extrabold leading-tight text-slate-900 dark:text-white md:text-5xl">
             {t('howItWorks.title')}{" "}
-            <span className="text-dodgerblue-500 dark:text-blue-300">
+            <span className="text-blue-500 dark:text-blue-400">
               {t('howItWorks.highlight')}
             </span>
           </h2>
 
-          <p className="mx-auto max-w-2xl text-base  dark:text-slate-200 md:mx-0 md:text-lg">
+          <p className="mx-auto max-w-2xl text-base text-slate-600 dark:text-slate-300 md:mx-0 md:text-lg">
             {t('howItWorks.description')}
           </p>
         </motion.div>
@@ -66,14 +66,14 @@ const HowItWorks = () => {
 
         {/* CTA */}
         <motion.div
-          className="relative mt-16 overflow-hidden rounded-2xl bg-slate-900 p-8 text-white shadow-xl transition-colors duration-300 dark:bg-slate-700 md:mt-20 md:p-12"
+          className="relative mt-16 overflow-hidden rounded-2xl bg-slate-900 p-8 text-white shadow-xl transition-colors duration-300 dark:bg-slate-800 md:mt-20 md:p-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
           <motion.div
-            className="absolute top-0 right-0 h-48 w-48 rounded-full bg-dodgerblue-500/10 blur-[60px]"
+            className="absolute top-0 right-0 h-48 w-48 rounded-full bg-blue-500/10 blur-[60px]"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 15, ease: 'easeInOut' }}
           />
@@ -83,7 +83,7 @@ const HowItWorks = () => {
               <h3 className="mb-2 text-2xl font-bold text-white md:text-3xl">
                 {t('howItWorks.optimizeTitle')}
               </h3>
-              <p className="text-base text-slate-300 dark:text-slate-100 md:text-lg">
+              <p className="text-base text-slate-300 dark:text-slate-200 md:text-lg">
                 {t('howItWorks.optimizeDescription')}
               </p>
             </div>
@@ -91,7 +91,7 @@ const HowItWorks = () => {
             <div className="mt-4 flex gap-4 md:mt-0">
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-2 rounded-2xl bg-dodgerblue-500 px-6 py-3 font-bold text-white transition-all hover:bg-dodgerblue-400"
+                className="flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 font-bold text-white transition-all hover:bg-blue-500"
               >
                 {t('howItWorks.bookDemo')}
                 <ChevronRight className="h-5 w-5" />

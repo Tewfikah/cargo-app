@@ -14,8 +14,8 @@ const Navbar = () => {
   if (location.pathname.startsWith("/dashboard")) return null;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-transparent bg-white/95 shadow-sm backdrop-blur dark:bg-slate-900/95 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="sticky top-0 z-50 border-b border-transparent bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+      <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
@@ -26,14 +26,18 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="#">
-              {t("navbar.solutions")}
-            </Link>
-            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="/about">
+          <div className="hidden items-center space-x-8 md:flex">
+            <Link
+              className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
+              to="/about"
+            >
               {t("navbar.about")}
             </Link>
-            <Link className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" to="/contact">
+
+            <Link
+              className="text-gray-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
+              to="/contact"
+            >
               {t("navbar.contact")}
             </Link>
 
@@ -96,18 +100,12 @@ const Navbar = () => {
         <div className="fixed inset-0 z-40 flex flex-col items-center justify-center space-y-6 bg-white/95 dark:bg-slate-900/95 md:hidden">
           <Link
             className="text-2xl font-medium text-gray-800 dark:text-white"
-            to="#"
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("navbar.solutions")}
-          </Link>
-          <Link
-            className="text-2xl font-medium text-gray-800 dark:text-white"
             to="/about"
             onClick={() => setMenuOpen(false)}
           >
             {t("navbar.about")}
           </Link>
+
           <Link
             className="text-2xl font-medium text-gray-800 dark:text-white"
             to="/contact"
@@ -117,13 +115,22 @@ const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-800">
-            <button onClick={() => setTheme("light")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+            <button
+              onClick={() => setTheme("light")}
+              className="rounded-xl p-2 text-slate-700 dark:text-white"
+            >
               <Sun size={18} />
             </button>
-            <button onClick={() => setTheme("dark")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+            <button
+              onClick={() => setTheme("dark")}
+              className="rounded-xl p-2 text-slate-700 dark:text-white"
+            >
               <Moon size={18} />
             </button>
-            <button onClick={() => setTheme("system")} className="rounded-xl p-2 text-slate-700 dark:text-white">
+            <button
+              onClick={() => setTheme("system")}
+              className="rounded-xl p-2 text-slate-700 dark:text-white"
+            >
               <Monitor size={18} />
             </button>
           </div>
