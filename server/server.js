@@ -1,20 +1,16 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
 dotenv.config();
-const app = express();
 
-app.use(cors());
+const app = express();
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
-
-// Test route
-app.get('/', (req, res) => {
-  res.send('Smart Transport API running...');
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, message: "API working" });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
