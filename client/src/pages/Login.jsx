@@ -1,11 +1,72 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Mail, Lock, User } from "lucide-react";
+import { useAuth } from "../AuthContext";
+
+const ADMIN_ROLE = "Admin";
 
 const Login = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { login, register } = useAuth();
+
   const [isSignup, setIsSignup] = useState(false);
+
+  // form state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // ui state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const resetMessages = () => {
+    setError("");
+    setSuccess("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    resetMessages();
+    setLoading(true);
+
+    try {
+      let user;
+
+      if (isSignup) {
+        // REGISTER
+        user = await register({ name, email, password });
+
+        // Customer: show success then go Home
+        if (user?.role !== ADMIN_ROLE) {
+          setSuccess("Account created successfully. Redirecting to home...");
+          setTimeout(() => navigate("/"), 1200);
+          return;
+        }
+
+        // Admin: go Dashboard
+        navigate("/dashboard");
+        return;
+      }
+
+      // LOGIN
+      user = await login({ email, password });
+
+      if (user?.role === ADMIN_ROLE) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 transition-colors duration-300 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700">
@@ -16,21 +77,36 @@ const Login = () => {
         </div>
 
         {/* Title */}
-        <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 dark:text-white">
-          {isSignup ? t('login.signup') : t('login.login')}
+        <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 dark:text-white">
+          {isSignup ? t("login.signup") : t("login.login")}
         </h2>
 
+        {/* Error / Success */}
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-200">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900/30 dark:bg-emerald-900/20 dark:text-emerald-200">
+            {success}
+          </div>
+        )}
+
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Name Input (Sign Up only) */}
           {isSignup && (
             <div className="relative">
               <User className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 dark:text-slate-400" />
               <input
                 type="text"
-                placeholder={t('login.namePlaceholder')}
+                placeholder={t("login.namePlaceholder")}
                 className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-12 pr-4 text-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400"
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={loading}
               />
             </div>
           )}
@@ -40,9 +116,13 @@ const Login = () => {
             <Mail className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 dark:text-slate-400" />
             <input
               type="email"
-              placeholder={t('login.emailPlaceholder')}
+              placeholder={t("login.emailPlaceholder")}
               className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-12 pr-4 text-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              autoComplete="email"
             />
           </div>
 
@@ -51,18 +131,29 @@ const Login = () => {
             <Lock className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 dark:text-slate-400" />
             <input
               type="password"
-              placeholder={t('login.passwordPlaceholder')}
+              placeholder={t("login.passwordPlaceholder")}
               className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-12 pr-4 text-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              autoComplete={isSignup ? "new-password" : "current-password"}
             />
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-600 py-3 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
+            disabled={loading}
+            className="w-full rounded-lg bg-blue-600 py-3 text-lg font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-70"
           >
-            {isSignup ? t('login.register') : t('login.login')}
+            {loading
+              ? isSignup
+                ? "Creating..."
+                : "Logging in..."
+              : isSignup
+              ? t("login.register")
+              : t("login.login")}
           </button>
         </form>
 
@@ -71,28 +162,39 @@ const Login = () => {
           {!isSignup ? (
             <>
               <p className="mb-2">
-                {t('login.noAccount')}{" "}
+                {t("login.noAccount")}{" "}
                 <button
                   type="button"
-                  onClick={() => setIsSignup(true)}
+                  onClick={() => {
+                    setIsSignup(true);
+                    resetMessages();
+                  }}
                   className="text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  {t('login.register')}
+                  {t("login.register")}
                 </button>
               </p>
-              <a href="#" className="text-blue-600 hover:underline dark:text-blue-400">
-                {t('login.forgot')}
-              </a>
+
+              {/* Optional: make this a real route later */}
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
+                {t("login.forgot")}
+              </Link>
             </>
           ) : (
             <p>
-              {t('login.haveAccount')}{" "}
+              {t("login.haveAccount")}{" "}
               <button
                 type="button"
-                onClick={() => setIsSignup(false)}
+                onClick={() => {
+                  setIsSignup(false);
+                  resetMessages();
+                }}
                 className="text-blue-600 hover:underline dark:text-blue-400"
               >
-                {t('login.login')}
+                {t("login.login")}
               </button>
             </p>
           )}

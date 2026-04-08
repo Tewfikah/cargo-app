@@ -6,13 +6,16 @@ import { BrowserRouter } from 'react-router-dom';
 import "leaflet/dist/leaflet.css";
 import './i18n';
 import { ThemeProvider } from './ThemeContext';
+import { AuthProvider } from "./AuthContext";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider>
+       <AuthProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

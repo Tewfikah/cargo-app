@@ -1,17 +1,27 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "../ThemeContext";
+import { useAuth } from "../AuthContext";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
 
+  const { user, isAuthenticated, logout } = useAuth();
+
   if (location.pathname.startsWith("/dashboard")) return null;
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+    navigate("/");
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-transparent bg-white/95 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
@@ -77,12 +87,28 @@ const Navbar = () => {
               </button>
             </div>
 
-            <Link
-              to="/login"
-              className="rounded-md bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700"
-            >
-              {t("navbar.login")}
-            </Link>
+            {/* Auth Area */}
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                  {user?.name || "User"}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-md bg-slate-900 px-5 py-2 text-white transition hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="rounded-md bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700"
+              >
+                {t("navbar.login")}
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -115,33 +141,39 @@ const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-800">
-            <button
-              onClick={() => setTheme("light")}
-              className="rounded-xl p-2 text-slate-700 dark:text-white"
-            >
+            <button onClick={() => setTheme("light")} className="rounded-xl p-2 text-slate-700 dark:text-white">
               <Sun size={18} />
             </button>
-            <button
-              onClick={() => setTheme("dark")}
-              className="rounded-xl p-2 text-slate-700 dark:text-white"
-            >
+            <button onClick={() => setTheme("dark")} className="rounded-xl p-2 text-slate-700 dark:text-white">
               <Moon size={18} />
             </button>
-            <button
-              onClick={() => setTheme("system")}
-              className="rounded-xl p-2 text-slate-700 dark:text-white"
-            >
+            <button onClick={() => setTheme("system")} className="rounded-xl p-2 text-slate-700 dark:text-white">
               <Monitor size={18} />
             </button>
           </div>
 
-          <Link
-            to="/login"
-            className="rounded-md bg-blue-600 px-6 py-3 text-lg text-white"
-            onClick={() => setMenuOpen(false)}
-          >
-            {t("navbar.login")}
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-lg font-semibold text-gray-800 dark:text-white">
+                {user?.name || "User"}
+              </p>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-md bg-slate-900 px-6 py-3 text-lg text-white dark:bg-blue-600"
+              >
+                Log out
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-md bg-blue-600 px-6 py-3 text-lg text-white"
+              onClick={() => setMenuOpen(false)}
+            >
+              {t("navbar.login")}
+            </Link>
+          )}
         </div>
       )}
     </nav>
