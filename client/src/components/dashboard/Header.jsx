@@ -1,7 +1,13 @@
 import React from "react";
 import { Menu, Bell, ChevronDown, Search } from "lucide-react";
+import { useAuth } from "../../AuthContext"; // ✅ correct path from components/dashboard/Header.jsx
 
 const Header = ({ onMenuClick }) => {
+  const { user } = useAuth();
+
+  const displayName = user?.name || "—";
+  const displayRole = user?.role || "—";
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800">
       {/* Left Section */}
@@ -37,18 +43,17 @@ const Header = ({ onMenuClick }) => {
         <div className="flex cursor-pointer items-center gap-3">
           <div className="hidden text-right sm:block">
             <p className="text-sm font-semibold text-gray-800 dark:text-white">
-              ዮሃን አስተዳዳሪ
+              {displayName}
             </p>
             <p className="text-xs text-gray-500 dark:text-slate-300">
-              ሲስተም አስተዳዳሪ
+              {displayRole}
             </p>
           </div>
 
-          <img
-            src="https://picsum.photos/100"
-            alt="User"
-            className="h-9 w-9 rounded-full border border-gray-200 dark:border-slate-600"
-          />
+          {/* Simple avatar using first letter */}
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-bold text-gray-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200">
+            {(displayName?.[0] || "U").toUpperCase()}
+          </div>
 
           <ChevronDown className="hidden h-4 w-4 text-gray-400 dark:text-slate-400 sm:block" />
         </div>

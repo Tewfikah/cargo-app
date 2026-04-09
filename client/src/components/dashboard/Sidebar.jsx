@@ -9,8 +9,9 @@ import {
   X,
   Menu,
 } from "lucide-react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import LogoutModal from "../LogoutModal";
+import { useAuth } from "../../AuthContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -24,6 +25,16 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleConfirmLogout = () => {
+    logout();                 // clears localStorage + auth state
+    setIsLogoutOpen(false);   // close modal
+    setMobileOpen(false);     // close sidebar on mobile
+    navigate("/");            // go to home
+  };
 
   const sidebarContent = (
     <div
@@ -42,7 +53,6 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* Close button for mobile */}
         <button className="lg:hidden" onClick={() => setMobileOpen(false)}>
           <X className="w-6 h-6" />
         </button>
@@ -122,6 +132,7 @@ const Sidebar = () => {
       <LogoutModal
         isOpen={isLogoutOpen}
         onClose={() => setIsLogoutOpen(false)}
+        onConfirm={handleConfirmLogout}
       />
     </>
   );

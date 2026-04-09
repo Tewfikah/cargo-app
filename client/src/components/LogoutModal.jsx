@@ -1,7 +1,7 @@
 import React from "react";
 import { LogOut } from "lucide-react";
 
-const LogoutModal = ({ isOpen, onClose }) => {
+const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -29,7 +29,7 @@ const LogoutModal = ({ isOpen, onClose }) => {
           </button>
 
           <button
-            onClick={onClose}
+            onClick={onConfirm}
             className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700"
           >
             Sign Out
