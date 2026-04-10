@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Mail, Lock, User } from "lucide-react";
 import { useAuth } from "../AuthContext";
@@ -10,7 +10,11 @@ const ADMIN_ROLE = "Admin";
 const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register } = useAuth();
+
+  // if user tried to open /dashboard/... before login
+  const from = location.state?.from; // example: "/dashboard/user-management"
 
   const [isSignup, setIsSignup] = useState(false);
 
@@ -41,15 +45,19 @@ const Login = () => {
         // REGISTER
         user = await register({ name, email, password });
 
-        // Customer: show success then go Home
+        // Customer: success then home
         if (user?.role !== ADMIN_ROLE) {
           setSuccess("Account created successfully. Redirecting to home...");
-          setTimeout(() => navigate("/"), 1200);
+          setTimeout(() => navigate("/", { replace: true }), 1200);
           return;
         }
 
-        // Admin: go Dashboard
-        navigate("/dashboard");
+        // Admin: go back to requested dashboard page OR dashboard home
+        if (from && from.startsWith("/dashboard")) {
+          navigate(from, { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
         return;
       }
 
@@ -57,9 +65,15 @@ const Login = () => {
       user = await login({ email, password });
 
       if (user?.role === ADMIN_ROLE) {
-        navigate("/dashboard");
+        // Admin: go back to requested dashboard page OR dashboard home
+        if (from && from.startsWith("/dashboard")) {
+          navigate(from, { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       } else {
-        navigate("/");
+        // Customer always home (your requirement)
+        navigate("/", { replace: true });
       }
     } catch (err) {
       setError(err.message || "Something went wrong");
@@ -175,7 +189,6 @@ const Login = () => {
                 </button>
               </p>
 
-              {/* Optional: make this a real route later */}
               <Link
                 to="/forgot-password"
                 className="text-blue-600 hover:underline dark:text-blue-400"

@@ -13,6 +13,7 @@ import Fleetmanagment from "./pages/dashboard/Fleetmanagment";
 import Shipments from "./pages/dashboard/Shipments";
 import UserManagement from "./pages/dashboard/UserManagement";
 import SystemSettings from "./pages/dashboard/SystemSettings";
+import Messages from "./pages/dashboard/Messages";
 
 import RequireAdmin from "./guards/RequireAdmin";
 
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="shipments-orders" element={<Shipments />} />
             <Route path="user-management" element={<UserManagement />} />
             <Route path="system-settings" element={<SystemSettings />} />
+            <Route path="messages" element={<Messages />} />
           </Route>
         </Route>
       </Routes>

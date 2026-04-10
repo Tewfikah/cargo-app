@@ -8,6 +8,7 @@ import {
   Loader2,
   MessageSquareText,
 } from "lucide-react";
+import { contactApi } from "../api/contactApi.js";
 
 const InputField = ({
   label,
@@ -17,6 +18,7 @@ const InputField = ({
   onChange,
   type = "text",
   multiline = false,
+  disabled = false,
 }) => (
   <div className="mb-6 flex-1">
     <label className="mb-1 block text-xs font-semibold text-gray-400 dark:text-slate-300">
@@ -25,20 +27,22 @@ const InputField = ({
 
     {multiline ? (
       <textarea
-        className="h-24 w-full resize-none border-b border-gray-300 bg-transparent py-2 text-sm text-gray-700 outline-none transition-colors focus:border-blue-600 dark:border-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-400"
+        className="h-24 w-full resize-none border-b border-gray-300 bg-transparent py-2 text-sm text-gray-700 outline-none transition-colors focus:border-blue-600 dark:border-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-400 disabled:opacity-60"
         placeholder={placeholder}
         name={name}
         value={value}
         onChange={onChange}
+        disabled={disabled}
       />
     ) : (
       <input
         type={type}
-        className="w-full border-b border-gray-300 bg-transparent py-2 text-sm text-gray-700 outline-none transition-colors focus:border-blue-600 dark:border-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-400"
+        className="w-full border-b border-gray-300 bg-transparent py-2 text-sm text-gray-700 outline-none transition-colors focus:border-blue-600 dark:border-slate-500 dark:text-slate-100 dark:placeholder:text-slate-400 dark:focus:border-blue-400 disabled:opacity-60"
         placeholder={placeholder}
         name={name}
         value={value}
         onChange={onChange}
+        disabled={disabled}
       />
     )}
   </div>
@@ -46,6 +50,7 @@ const InputField = ({
 
 const ContactPage = () => {
   const { t } = useTranslation();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -54,11 +59,19 @@ const ContactPage = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Smart analysis UI (still fake / frontend only for now)
   const [smartAnalysis, setSmartAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  // NEW: submit states
+  const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState("");
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setSubmitError("");
+    setSubmitSuccess("");
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -68,19 +81,26 @@ const ContactPage = () => {
     setTimeout(() => {
       setSmartAnalysis(t("contact.smartAnalysis"));
       setIsAnalyzing(false);
-    }, 1000);
+    }, 800);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
+    setSubmitSuccess("");
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      alert(
-        "መልዕክትዎ በተሳካ ሁኔታ ተልኳል! የSmartCargo ቡድናችን በቅርቡ ያግኙዎታል።"
-      );
+
+    try {
+      await contactApi.send(formData);
+
+      setSubmitSuccess("Message sent successfully. We will contact you soon.");
       setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 1500);
+      setSmartAnalysis(null);
+    } catch (err) {
+      setSubmitError(err.message || "Failed to send message");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -135,6 +155,19 @@ const ContactPage = () => {
 
         {/* Right Panel */}
         <div className="relative rounded-xl p-10 transition-colors duration-300 md:w-2/3 md:p-14">
+          {/* Success / Error */}
+          {submitError && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-200">
+              {submitError}
+            </div>
+          )}
+
+          {submitSuccess && (
+            <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-900/30 dark:bg-emerald-900/20 dark:text-emerald-200">
+              {submitSuccess}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-x-8 md:grid-cols-2">
               <InputField
@@ -143,6 +176,7 @@ const ContactPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
+                disabled={isSubmitting}
               />
               <InputField
                 label={t("contact.email")}
@@ -151,6 +185,7 @@ const ContactPage = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -160,6 +195,7 @@ const ContactPage = () => {
               name="subject"
               value={formData.subject}
               onChange={handleInputChange}
+              disabled={isSubmitting}
             />
 
             <div className="group relative">
@@ -170,12 +206,13 @@ const ContactPage = () => {
                 multiline
                 value={formData.message}
                 onChange={handleInputChange}
+                disabled={isSubmitting}
               />
 
               <button
                 type="button"
                 onClick={analyzeMessage}
-                disabled={isAnalyzing || !formData.message}
+                disabled={isAnalyzing || !formData.message || isSubmitting}
                 className="absolute right-0 top-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-800 disabled:opacity-50 dark:text-blue-300 dark:hover:text-blue-200"
               >
                 {isAnalyzing ? (
@@ -209,9 +246,7 @@ const ContactPage = () => {
                 ) : (
                   <Send size={18} />
                 )}
-                {isSubmitting
-                  ? t("contact.sending")
-                  : t("contact.sendMessage")}
+                {isSubmitting ? t("contact.sending") : t("contact.sendMessage")}
               </button>
             </div>
           </form>

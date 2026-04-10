@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import QuickAnalytics from "../../components/dashboard/QuickAnalytics";
 import LiveMap from "../../components/dashboard/LiveMap";
 import ShipmentsTable from "../../components/dashboard/ShipmentsTable";
-import ShipmentsHeader from "../../components/dashboard/ShipmentsHeader";
+import MessagesCards from "../../components/dashboard/MessagesCards";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -49,11 +49,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <ShipmentsHeader
-          onCreate={handleCreate}
-          onBulkUpload={handleBulkUpload}
-          onRangeChange={(r) => console.log("range", r)}
-        />
+       <MessagesCards />
 
         {/* Full-width Live Map + Analytics */}
         <div className="mt-6 space-y-6">

@@ -5,6 +5,7 @@ import {
   Package,
   Users,
   Settings,
+  Mail,
   LogOut,
   X,
   Menu,
@@ -19,6 +20,7 @@ const navItems = [
   { icon: Package, label: "Shipments & Orders", path: "/dashboard/shipments-orders" },
   { icon: Users, label: "User Management", path: "/dashboard/user-management" },
   { icon: Settings, label: "System Settings", path: "/dashboard/system-settings" },
+  { icon: Mail, label: "Messages", path: "/dashboard/messages" },
 ];
 
 const Sidebar = () => {
