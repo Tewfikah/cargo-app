@@ -1,17 +1,18 @@
 import React from "react";
 import { Clock, Truck, CheckCircle, AlertCircle } from "lucide-react";
+import { SHIPMENT_STATUS, STATUS_LABELS_EN } from "../../../utils/shipmentStatus.js";
 
 const icons = {
-  Pending: Clock,
-  "In Transit": Truck,
-  Delivered: CheckCircle,
-  Delayed: AlertCircle,
+  [SHIPMENT_STATUS.PENDING]: Clock,
+  [SHIPMENT_STATUS.IN_TRANSIT]: Truck,
+  [SHIPMENT_STATUS.DELIVERED]: CheckCircle,
+  [SHIPMENT_STATUS.DELAYED]: AlertCircle,
 };
 
 export const StatCard = ({
   label = "Status",
   value = "0",
-  type = "Pending",
+  type = SHIPMENT_STATUS.PENDING, // ✅ now expects status code (or "TOTAL")
   color = "#6366f1",
   shipments = [],
 }) => {
@@ -21,7 +22,7 @@ export const StatCard = ({
 
   let numericValue = 0;
   if (Array.isArray(shipments) && shipments.length > 0) {
-    if (type === "Total" || label.toLowerCase().includes("total")) {
+    if (type === "TOTAL") {
       numericValue = total;
     } else {
       numericValue = shipments.filter((s) => s.status === type).length;
@@ -32,6 +33,9 @@ export const StatCard = ({
 
   const safeTotal = total || Math.max(numericValue, 1);
   const percentage = Math.round((numericValue / safeTotal) * 100);
+
+  const subtitle =
+    type === "TOTAL" ? "Total" : (STATUS_LABELS_EN[type] || label);
 
   return (
     <div
@@ -51,6 +55,9 @@ export const StatCard = ({
           <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white">
             {numericValue.toLocaleString()}
           </h3>
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-300">
+            {subtitle}
+          </p>
         </div>
 
         <div
@@ -63,11 +70,14 @@ export const StatCard = ({
 
       <div className="relative z-10">
         <div className="mb-2 flex items-center justify-between text-xs">
-          <span className="font-medium text-slate-400 dark:text-slate-300">Activity</span>
+          <span className="font-medium text-slate-400 dark:text-slate-300">
+            Activity
+          </span>
           <span className="font-bold" style={{ color }}>
             {percentage}%
           </span>
         </div>
+
         <div className="h-2 w-full overflow-hidden rounded-full border border-slate-100 bg-slate-50 dark:border-slate-700 dark:bg-slate-700">
           <div
             className="relative h-full overflow-hidden rounded-full transition-all duration-1000 ease-out"

@@ -1,5 +1,6 @@
 import React from "react";
 import { Truck, CheckCircle, Wrench, Users, Plus } from "lucide-react";
+import { VEHICLE_STATUS } from "../../../utils/vehicleStatus.js";
 
 const StatsCards = ({
   total = 0,
@@ -9,13 +10,17 @@ const StatsCards = ({
   vehicles = [],
 }) => {
   const useVehicles = Array.isArray(vehicles) && vehicles.length > 0;
+
   const totalCount = useVehicles ? vehicles.length : total;
+
   const availableCount = useVehicles
-    ? vehicles.filter((v) => v.status === "Available").length
+    ? vehicles.filter((v) => v.status === VEHICLE_STATUS.AVAILABLE).length
     : available;
+
   const maintenanceCount = useVehicles
-    ? vehicles.filter((v) => v.status === "Maintenance").length
+    ? vehicles.filter((v) => v.status === VEHICLE_STATUS.MAINTENANCE).length
     : maintenance;
+
   const driversCount = useVehicles
     ? new Set(
         vehicles
@@ -49,7 +54,12 @@ const StatsCards = ({
               </div>
             </div>
           </div>
-          <button className="rounded-md bg-blue-50 p-1.5 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30">
+
+          <button
+            type="button"
+            className="rounded-md bg-blue-50 p-1.5 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
+            title="Add vehicle"
+          >
             <Plus size={16} />
           </button>
         </div>

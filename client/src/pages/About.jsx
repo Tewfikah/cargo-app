@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import StatsCard from '../components/StatsCard';
+import cargo from '../assets/cargo.avif'
 
 const About = () => {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ const About = () => {
               <div className="mt-12">
                 <div className="aspect-[4/5] overflow-hidden rounded-[40px] bg-blue-100 shadow-2xl shadow-purple-200/50 transition-transform duration-500 hover:rotate-0 dark:bg-slate-700 dark:shadow-black/20 transform -rotate-2">
                   <img
-                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800"
+                    src={cargo}
                     alt={t('about.modernLogistics')}
                     className="h-full w-full object-cover"
                   />

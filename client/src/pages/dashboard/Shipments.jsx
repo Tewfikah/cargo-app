@@ -2,35 +2,31 @@ import React, { useState } from "react";
 import { StatCard } from "../../components/dashboard/Shipments/StatCard";
 import { Modal } from "../../components/dashboard/Shipments/Modal";
 import { ShipmentTable } from "../../components/dashboard/Shipments/ShipmentTable";
+import { shipmentsMock } from "../../mocks/shipments.mock.js";
+import { SHIPMENT_STATUS, STATUS_LABELS_EN } from "../../utils/shipmentStatus.js";
 
-const dummyShipments = [
-  { id: "#SHP-001", customer: "TechGiant Inc.", status: "In Transit", driver: "Michael R.", eta: "2h 15m" },
-  { id: "#SHP-002", customer: "Green Grocers", status: "Delivered", driver: "Sarah L.", eta: "Completed" },
-  { id: "#SHP-003", customer: "AutoParts Ltd.", status: "Pending", driver: "Unassigned", eta: "Pending" },
-  { id: "#SHP-004", customer: "Fashion Week", status: "Delayed", driver: "James K.", eta: "Delayed +4h" },
-  { id: "#SHP-005", customer: "MediCare Plus", status: "In Transit", driver: "Robert M.", eta: "45m" },
-  { id: "#SHP-006", customer: "Global Logistics", status: "Pending", driver: "Unassigned", eta: "Pending" },
-  { id: "#SHP-007", customer: "FastTrack Delivery", status: "Delivered", driver: "Alice W.", eta: "Completed" },
-  { id: "#SHP-008", customer: "Prime Movers", status: "In Transit", driver: "David B.", eta: "3h 10m" },
-];
+const DRIVERS = ["Michael R.", "Sarah L.", "James K.", "Robert M.", "Alice W.", "David B."];
 
 const Shipments = () => {
-  const [shipments, setShipments] = useState(dummyShipments);
+  const [shipments, setShipments] = useState(shipmentsMock);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null);
+  const [modalType, setModalType] = useState(null); // "assign" | "status"
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [modalValue, setModalValue] = useState("");
 
   const filteredData = shipments.filter((item) => {
+    const q = searchTerm.trim().toLowerCase();
     const matchesSearch =
-      item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.customer.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = activeFilter === "All" || item.status === activeFilter;
+      String(item.id || "").toLowerCase().includes(q) ||
+      String(item.client || "").toLowerCase().includes(q);
+
+    const matchesFilter = activeFilter === "ALL" || item.status === activeFilter;
     return matchesSearch && matchesFilter;
   });
 
@@ -38,16 +34,18 @@ const Shipments = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleAssignDriver = (id) => {
+  const openAssignDriver = (id) => {
     const shipment = shipments.find((s) => s.id === id);
+    if (!shipment) return;
     setSelectedShipment(shipment);
     setModalType("assign");
-    setModalValue(shipment.driver === "Unassigned" ? "Michael R." : shipment.driver);
+    setModalValue(shipment.driver && shipment.driver !== "Unassigned" ? shipment.driver : DRIVERS[0]);
     setIsModalOpen(true);
   };
 
-  const handleUpdateStatus = (id) => {
+  const openUpdateStatus = (id) => {
     const shipment = shipments.find((s) => s.id === id);
+    if (!shipment) return;
     setSelectedShipment(shipment);
     setModalType("status");
     setModalValue(shipment.status);
@@ -64,18 +62,16 @@ const Shipments = () => {
   const handleSaveChanges = () => {
     if (!selectedShipment) return;
 
-    const updatedShipments = shipments.map((item) => {
-      if (item.id === selectedShipment.id) {
-        if (modalType === "assign") {
-          return { ...item, driver: modalValue };
-        } else if (modalType === "status") {
-          return { ...item, status: modalValue };
-        }
-      }
-      return item;
-    });
+    setShipments((prev) =>
+      (prev || []).map((item) => {
+        if (item.id !== selectedShipment.id) return item;
 
-    setShipments(updatedShipments);
+        if (modalType === "assign") return { ...item, driver: modalValue };
+        if (modalType === "status") return { ...item, status: modalValue };
+        return item;
+      })
+    );
+
     handleCloseModal();
   };
 
@@ -86,10 +82,10 @@ const Shipments = () => {
       </h1>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Shipments" type="Total" color="#6366f1" shipments={shipments} />
-        <StatCard label="In Transit" type="In Transit" color="#3b82f6" shipments={shipments} />
-        <StatCard label="Delivered" type="Delivered" color="#10b981" shipments={shipments} />
-        <StatCard label="Delayed" type="Delayed" color="#f43f5e" shipments={shipments} />
+        <StatCard label="Total Shipments" type="TOTAL" color="#6366f1" shipments={shipments} />
+        <StatCard label={STATUS_LABELS_EN.IN_TRANSIT} type={SHIPMENT_STATUS.IN_TRANSIT} color="#3b82f6" shipments={shipments} />
+        <StatCard label={STATUS_LABELS_EN.DELIVERED} type={SHIPMENT_STATUS.DELIVERED} color="#10b981" shipments={shipments} />
+        <StatCard label={STATUS_LABELS_EN.DELAYED} type={SHIPMENT_STATUS.DELAYED} color="#f43f5e" shipments={shipments} />
       </div>
 
       <div className="h-[600px] overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -109,8 +105,8 @@ const Shipments = () => {
             setSearchTerm(term);
             setCurrentPage(1);
           }}
-          onUpdateStatus={handleUpdateStatus}
-          onAssignDriver={handleAssignDriver}
+          onUpdateStatus={openUpdateStatus}
+          onAssignDriver={openAssignDriver}
         />
       </div>
 
@@ -138,12 +134,12 @@ const Shipments = () => {
                   onChange={(e) => setModalValue(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
                 >
-                  <option value="Michael R.">Michael R.</option>
-                  <option value="Sarah L.">Sarah L.</option>
-                  <option value="James K.">James K.</option>
-                  <option value="Robert M.">Robert M.</option>
-                  <option value="Alice W.">Alice W.</option>
-                  <option value="David B.">David B.</option>
+                  {DRIVERS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                  <option value="Unassigned">Unassigned</option>
                 </select>
               </div>
             ) : (
@@ -156,10 +152,10 @@ const Shipments = () => {
                   onChange={(e) => setModalValue(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="In Transit">In Transit</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Delayed">Delayed</option>
+                  <option value={SHIPMENT_STATUS.PENDING}>{STATUS_LABELS_EN.PENDING}</option>
+                  <option value={SHIPMENT_STATUS.IN_TRANSIT}>{STATUS_LABELS_EN.IN_TRANSIT}</option>
+                  <option value={SHIPMENT_STATUS.DELIVERED}>{STATUS_LABELS_EN.DELIVERED}</option>
+                  <option value={SHIPMENT_STATUS.DELAYED}>{STATUS_LABELS_EN.DELAYED}</option>
                 </select>
               </div>
             )}

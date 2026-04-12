@@ -1,12 +1,11 @@
 import React from "react";
 import { Plus } from "lucide-react";
-import { ROLE_CONFIG } from "../constants";
+import { ROLE_CONFIG, USER_ROLES, USER_ROLE_LABELS } from "./constants";
 
 const ROLE_COLOR = {
-  Dispatcher: "#3b82f6",
-  Driver: "#10b981",
-  Customer: "#6366f1",
-  Admin: "#ef4444",
+  ADMIN: "#ef4444",
+  DRIVER: "#10b981",
+  CUSTOMER: "#6366f1",
 };
 
 export const KPICards = ({ users = [], onAddUser }) => {
@@ -15,34 +14,46 @@ export const KPICards = ({ users = [], onAddUser }) => {
     return users.filter((u) => u.role === role).length;
   };
 
+  const roleCodes = USER_ROLES.filter((r) => r !== "All");
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-      {Object.entries(ROLE_CONFIG).map(([role, config]) => {
+    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {roleCodes.map((role) => {
+        const config = ROLE_CONFIG[role];
         const count = counts(role);
         const color = ROLE_COLOR[role] || "#94a3b8";
+        const label = USER_ROLE_LABELS[role] || role;
 
         return (
           <div
             key={role}
-            className="bg-white p-5 rounded-xl shadow-lg border border-slate-200 flex flex-col justify-between transition-all hover:shadow-2xl hover:-translate-y-1"
+            className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800"
             style={{ borderLeft: `4px solid ${color}33` }}
           >
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-slate-800">{count}</span>
-                <span className="text-sm font-medium text-slate-500">{role}s</span>
+                <span className="text-2xl font-bold text-slate-800 dark:text-white">
+                  {count}
+                </span>
+                <span className="text-sm font-medium text-slate-500 dark:text-slate-300">
+                  {label}s
+                </span>
               </div>
 
-              <div className={`p-2 rounded-lg ${config.iconBg}`}>
-                {config.icon}
+              <div className={`rounded-lg p-2 ${config?.iconBg || ""}`}>
+                {config?.icon}
               </div>
             </div>
 
             <div className="mt-4 flex flex-col">
-              <span className="text-3xl font-extrabold text-slate-900 leading-none">{count}</span>
+              <span className="text-3xl font-extrabold leading-none text-slate-900 dark:text-white">
+                {count}
+              </span>
 
               <div className="mt-2">
-                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${config.badgeColor}`}>{role}</span>
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${config?.badgeColor || ""}`}>
+                  {label}
+                </span>
               </div>
             </div>
           </div>
@@ -50,13 +61,13 @@ export const KPICards = ({ users = [], onAddUser }) => {
       })}
 
       {/* Add User Card */}
-      <div className="bg-white p-5 rounded-xl shadow-lg border border-slate-200 flex items-center justify-center">
+      <div className="flex items-center justify-center rounded-xl border border-slate-200 bg-white p-5 shadow-lg dark:border-slate-700 dark:bg-slate-800">
         <button
           onClick={onAddUser}
-          className="w-full h-full min-h-[140px] flex flex-col items-center justify-center space-y-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all transform active:scale-95 font-semibold"
+          className="flex min-h-[140px] w-full flex-col items-center justify-center space-y-2 rounded-xl bg-blue-600 font-semibold text-white transition-all active:scale-95 hover:bg-blue-700"
         >
-          <div className="p-2 bg-white/20 rounded-full">
-            <Plus className="w-6 h-6" />
+          <div className="rounded-full bg-white/20 p-2">
+            <Plus className="h-6 w-6" />
           </div>
           <span>Add User</span>
         </button>
@@ -64,4 +75,5 @@ export const KPICards = ({ users = [], onAddUser }) => {
     </div>
   );
 };
+
 export default KPICards;

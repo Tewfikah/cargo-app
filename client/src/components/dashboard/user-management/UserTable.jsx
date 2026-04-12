@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Search,
   ChevronDown,
@@ -6,109 +6,109 @@ import {
   ChevronRight,
   ArrowUpDown,
   Plus,
+  Trash2,
+  Power,
 } from "lucide-react";
-import { ROLE_CONFIG, USER_ROLES } from "../constants";
+import {
+  ROLE_CONFIG,
+  USER_ROLES,
+  USER_ROLE_LABELS,
+  USER_STATUS,
+  USER_STATUS_LABELS,
+} from "./constants";
 
 export const UserTable = (props) => {
   const {
     users = [],
-    currentPage = 1,
+
+    // optional controlled props
+    currentPage: currentPageProp,
     pageSize = 10,
-    onPageChange = () => {},
-    activeTab = "All",
-    onTabChange = () => {},
-    searchTerm = "",
-    onSearchChange = () => {},
+    onPageChange: onPageChangeProp,
+
+    activeTab: activeTabProp,
+    onTabChange: onTabChangeProp,
+
+    searchTerm: searchTermProp,
+    onSearchChange: onSearchChangeProp,
+
     onSortChange = () => {},
+
     onEditUser = () => {},
+    onAddUser = () => {},
+
+    // ✅ NEW backend-ready callbacks
+    onChangeRole = () => {},
+    onToggleStatus = () => {},
+    onDeleteUser = () => {},
   } = props || {};
 
+  // internal state (used if parent doesn't control)
+  const [internalTab, setInternalTab] = useState("All");
+  const [internalQuery, setInternalQuery] = useState("");
+  const [internalPage, setInternalPage] = useState(1);
+
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const { onAddUser = () => {} } = props || {};
-
-  const SAMPLE_USERS = [
-    {
-      id: "u1",
-      name: "Alice Johnson",
-      role: "Dispatcher",
-      status: "Active",
-      email: "alice@example.com",
-      avatar: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=256&h=256&fit=crop",
-    },
-    {
-      id: "u2",
-      name: "Bob Smith",
-      role: "Driver",
-      status: "Inactive",
-      email: "bob@example.com",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=256&h=256&fit=crop",
-    },
-    {
-      id: "u3",
-      name: "Carol Lee",
-      role: "Customer",
-      status: "Active",
-      email: "carol@example.com",
-      avatar: "https://images.unsplash.com/photo-1545996124-1b8d5b5b6f6d?w=256&h=256&fit=crop",
-    },
-    {
-      id: "u4",
-      name: "Daniel Green",
-      role: "Admin",
-      status: "Active",
-      email: "daniel@example.com",
-      avatar: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=256&h=256&fit=crop",
-    },
-    {
-      id: "u5",
-      name: "Eve Turner",
-      role: "Driver",
-      status: "Active",
-      email: "eve@example.com",
-      avatar: "https://images.unsplash.com/photo-1544006659-f0b21884ce1d?w=256&h=256&fit=crop",
-    },
-  ];
-
-  const localUsers = users && users.length > 0 ? users : SAMPLE_USERS;
-  const [query, setQuery] = useState(searchTerm || "");
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState("asc");
-  const [page, setPage] = useState(currentPage || 1);
-  const effectivePageSize = pageSize || 5;
+
+  const activeTab = activeTabProp !== undefined ? activeTabProp : internalTab;
+  const setActiveTab = (tab) => {
+    if (onTabChangeProp) onTabChangeProp(tab);
+    else setInternalTab(tab);
+  };
+
+  const query = searchTermProp !== undefined ? searchTermProp : internalQuery;
+  const setQuery = (q) => {
+    if (onSearchChangeProp) onSearchChangeProp(q);
+    else setInternalQuery(q);
+  };
+
+  const page = currentPageProp !== undefined ? currentPageProp : internalPage;
+  const setPage = (p) => {
+    if (onPageChangeProp) onPageChangeProp(p);
+    else setInternalPage(p);
+  };
+
+  const effectivePageSize = pageSize || 10;
 
   const handleSearch = (q) => {
     setQuery(q);
-    onSearchChange && onSearchChange(q);
     setPage(1);
   };
 
   const handleSort = (key) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else setSortDir("asc");
-    setSortKey(key);
-    onSortChange && onSortChange(key);
-  };
 
-  const handlePageChange = (p) => {
-    setPage(p);
-    onPageChange && onPageChange(p);
+    setSortKey(key);
+    onSortChange(key);
   };
 
   const filtered = useMemo(() => {
     const q = (query || "").toLowerCase().trim();
-    let list = localUsers.slice();
+    let list = (users || []).slice();
 
     if (activeTab && activeTab !== "All") {
       list = list.filter((u) => u.role === activeTab);
     }
 
     if (q) {
-      list = list.filter(
-        (u) =>
+      list = list.filter((u) => {
+        const roleLabel = (USER_ROLE_LABELS[u.role] || u.role || "")
+          .toString()
+          .toLowerCase();
+        const statusLabel = (USER_STATUS_LABELS[u.status] || u.status || "")
+          .toString()
+          .toLowerCase();
+
+        return (
           (u.name || "").toLowerCase().includes(q) ||
           (u.email || "").toLowerCase().includes(q) ||
-          (u.role || "").toLowerCase().includes(q)
-      );
+          roleLabel.includes(q) ||
+          statusLabel.includes(q)
+        );
+      });
     }
 
     if (sortKey) {
@@ -122,7 +122,7 @@ export const UserTable = (props) => {
     }
 
     return list;
-  }, [localUsers, query, sortKey, sortDir, activeTab]);
+  }, [users, query, sortKey, sortDir, activeTab]);
 
   const paged = useMemo(() => {
     const total = filtered.length;
@@ -130,6 +130,7 @@ export const UserTable = (props) => {
     const current = Math.min(Math.max(1, page), pages);
     const start = (current - 1) * effectivePageSize;
     const end = start + effectivePageSize;
+
     return {
       total,
       pages,
@@ -139,6 +140,11 @@ export const UserTable = (props) => {
       endIndex: Math.min(end, total),
     };
   }, [filtered, page, effectivePageSize]);
+
+  const tabLabel = (tab) =>
+    tab === "All" ? "All" : USER_ROLE_LABELS[tab] || tab;
+
+  const roleOptions = USER_ROLES.filter((r) => r !== "All");
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -161,7 +167,7 @@ export const UserTable = (props) => {
 
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => onAddUser()}
+              onClick={onAddUser}
               className="inline-flex items-center rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
               <Plus className="mr-2 h-4 w-4" /> Add User
@@ -176,7 +182,9 @@ export const UserTable = (props) => {
                 <ArrowUpDown className="h-4 w-4 text-slate-500" />
                 <span>Sort By</span>
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform ${isSortOpen ? "rotate-180" : ""}`}
+                  className={`h-4 w-4 transition-transform ${
+                    isSortOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
 
@@ -207,7 +215,7 @@ export const UserTable = (props) => {
               <button
                 key={tab}
                 onClick={() => {
-                  onTabChange(tab);
+                  setActiveTab(tab);
                   setPage(1);
                 }}
                 className={`border-b-2 px-1 pb-3 text-sm font-medium ${
@@ -216,7 +224,7 @@ export const UserTable = (props) => {
                     : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white"
                 }`}
               >
-                {tab}
+                {tabLabel(tab)}
               </button>
             ))}
           </div>
@@ -237,25 +245,44 @@ export const UserTable = (props) => {
           </thead>
 
           <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-            {paged && paged.total > 0 ? (
+            {paged.total > 0 ? (
               paged.items.map((user) => {
-                const roleCfg = ROLE_CONFIG[user.role] || {
-                  icon: null,
-                  iconBg: "",
-                  badgeColor: "",
-                };
+                const roleCfg = ROLE_CONFIG[user.role] || {};
+                const RoleIcon = roleCfg.Icon;
+
+                const roleLabel = USER_ROLE_LABELS[user.role] || user.role;
+                const isActive = user.status === USER_STATUS.ACTIVE;
 
                 return (
-                  <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30"
+                  >
                     {/* Role */}
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
-                        <div className={`rounded-md p-1.5 ${roleCfg.iconBg}`}>
-                          {roleCfg.icon}
+                        <div className={`rounded-md p-1.5 ${roleCfg.iconBg || ""}`}>
+                          {RoleIcon ? <RoleIcon className="h-4 w-4" /> : null}
                         </div>
-                        <span className={`rounded px-2.5 py-0.5 text-[11px] font-bold ${roleCfg.badgeColor}`}>
-                          {user.role}
-                        </span>
+
+                        <div className="flex flex-col gap-1">
+                          <span className={`w-fit rounded px-2.5 py-0.5 text-[11px] font-bold ${roleCfg.badgeColor || ""}`}>
+                            {roleLabel}
+                          </span>
+
+                          {/* ✅ Backend-ready role change */}
+                          <select
+                            value={user.role}
+                            onChange={(e) => onChangeRole(user.id, e.target.value)}
+                            className="w-fit rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                          >
+                            {roleOptions.map((r) => (
+                              <option key={r} value={r}>
+                                {USER_ROLE_LABELS[r] || r}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </td>
 
@@ -263,7 +290,7 @@ export const UserTable = (props) => {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
-                          {roleCfg.icon}
+                          {RoleIcon ? <RoleIcon className="h-4 w-4" /> : null}
                         </div>
                         <span className="text-sm font-semibold text-slate-700 dark:text-white">
                           {user.name}
@@ -275,19 +302,17 @@ export const UserTable = (props) => {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          user.status === "Active"
+                          isActive
                             ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300"
                             : "bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-300"
                         }`}
                       >
                         <span
                           className={`mr-2 h-1.5 w-1.5 rounded-full ${
-                            user.status === "Active"
-                              ? "bg-green-500"
-                              : "bg-orange-500"
+                            isActive ? "bg-green-500" : "bg-orange-500"
                           }`}
-                        ></span>
-                        {user.status}
+                        />
+                        {USER_STATUS_LABELS[user.status] || user.status}
                       </span>
                     </td>
 
@@ -300,13 +325,36 @@ export const UserTable = (props) => {
 
                     {/* Actions */}
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => onEditUser(user)}
-                        className="inline-flex items-center rounded bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
-                      >
-                        Edit
-                        <ChevronDown className="ml-1 h-3 w-3" />
-                      </button>
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          onClick={() => onEditUser(user)}
+                          className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() => onToggleStatus(user.id)}
+                          className={`inline-flex items-center gap-1 rounded px-3 py-1.5 text-xs font-semibold ${
+                            isActive
+                              ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/20 dark:text-amber-300"
+                              : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300"
+                          }`}
+                          title="Toggle status"
+                        >
+                          <Power className="h-3.5 w-3.5" />
+                          {isActive ? "Deactivate" : "Activate"}
+                        </button>
+
+                        <button
+                          onClick={() => onDeleteUser(user.id)}
+                          className="inline-flex items-center gap-1 rounded bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700"
+                          title="Delete user"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -331,14 +379,20 @@ export const UserTable = (props) => {
             {paged.total > 0 ? paged.startIndex : 0}
           </span>{" "}
           to{" "}
-          <span className="font-semibold text-slate-700 dark:text-white">{paged.endIndex}</span> of{" "}
-          <span className="font-semibold text-slate-700 dark:text-white">{paged.total}</span> results
+          <span className="font-semibold text-slate-700 dark:text-white">
+            {paged.endIndex}
+          </span>{" "}
+          of{" "}
+          <span className="font-semibold text-slate-700 dark:text-white">
+            {paged.total}
+          </span>{" "}
+          results
         </p>
 
         <div className="flex items-center space-x-2">
           <button
             disabled={paged.current === 1}
-            onClick={() => handlePageChange(paged.current - 1)}
+            onClick={() => setPage(paged.current - 1)}
             className="rounded-lg border p-2 disabled:opacity-30 dark:border-slate-600 dark:text-white"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -347,7 +401,7 @@ export const UserTable = (props) => {
           {Array.from({ length: paged.pages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
-              onClick={() => handlePageChange(p)}
+              onClick={() => setPage(p)}
               className={`h-8 w-8 rounded-lg ${
                 paged.current === p
                   ? "bg-blue-600 text-white"
@@ -360,7 +414,7 @@ export const UserTable = (props) => {
 
           <button
             disabled={paged.current === paged.pages || paged.pages === 0}
-            onClick={() => handlePageChange(paged.current + 1)}
+            onClick={() => setPage(paged.current + 1)}
             className="rounded-lg border p-2 disabled:opacity-30 dark:border-slate-600 dark:text-white"
           >
             <ChevronRight className="h-4 w-4" />

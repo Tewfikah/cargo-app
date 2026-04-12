@@ -1,46 +1,40 @@
 import React from "react";
-import {
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  Truck,
-  MoreVertical,
-  MapPin,
-} from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Truck, MoreVertical, MapPin } from "lucide-react";
+import { SHIPMENT_STATUS, STATUS_LABELS_EN, STATUS_STYLES } from "../../../utils/shipmentStatus.js";
 
-const tabs = ["All", "Pending", "In Transit", "Delivered", "Delayed"];
+const tabs = [
+  { value: "ALL", label: "All" },
+  { value: SHIPMENT_STATUS.PENDING, label: STATUS_LABELS_EN.PENDING },
+  { value: SHIPMENT_STATUS.IN_TRANSIT, label: STATUS_LABELS_EN.IN_TRANSIT },
+  { value: SHIPMENT_STATUS.DELIVERED, label: STATUS_LABELS_EN.DELIVERED },
+  { value: SHIPMENT_STATUS.DELAYED, label: STATUS_LABELS_EN.DELAYED },
+];
 
 export const ShipmentTable = ({
   data = [],
-  totalItems,
-  itemsPerPage,
-  currentPage,
-  onPageChange,
-  activeFilter,
-  onFilterChange,
-  searchTerm,
-  onSearchChange,
-  onUpdateStatus,
-  onAssignDriver,
+  totalItems = 0,
+  itemsPerPage = 5,
+  currentPage = 1,
+  onPageChange = () => {},
+  activeFilter = "ALL",
+  onFilterChange = () => {},
+  searchTerm = "",
+  onSearchChange = () => {},
+  onUpdateStatus = () => {},
+  onAssignDriver = () => {},
 }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startResult = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endResult = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const getStatusStyles = (status) => {
-    switch (status) {
-      case "In Transit":
-        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
-      case "Delivered":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800";
-      case "Pending":
-        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800";
-      case "Delayed":
-        return "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800";
-      default:
-        return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600";
-    }
+  const getStatusStyles = (statusCode) => {
+    return (
+      STATUS_STYLES[statusCode] ||
+      "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600"
+    );
   };
+
+  const getStatusLabel = (statusCode) => STATUS_LABELS_EN[statusCode] || statusCode || "—";
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -49,15 +43,15 @@ export const ShipmentTable = ({
         <div className="no-scrollbar flex gap-1 overflow-x-auto">
           {tabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => onFilterChange(tab)}
+              key={tab.value}
+              onClick={() => onFilterChange(tab.value)}
               className={`rounded-full border px-4 py-1.5 text-xs font-bold transition-all ${
-                activeFilter === tab
+                activeFilter === tab.value
                   ? "border-blue-600 bg-blue-600 text-white"
                   : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               }`}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -90,7 +84,10 @@ export const ShipmentTable = ({
           <tbody className="divide-y divide-slate-100 bg-white dark:divide-slate-700 dark:bg-slate-800">
             {data.length > 0 ? (
               data.map((row) => (
-                <tr key={row.id} className="transition-colors hover:bg-blue-50/30 dark:hover:bg-slate-700/30">
+                <tr
+                  key={row.id}
+                  className="transition-colors hover:bg-blue-50/30 dark:hover:bg-slate-700/30"
+                >
                   <td className="px-6 py-5 font-bold text-slate-800 dark:text-white">
                     {row.id}
                   </td>
@@ -101,7 +98,7 @@ export const ShipmentTable = ({
                         <MapPin size={16} className="dark:text-slate-200" />
                       </div>
                       <span className="text-sm font-semibold text-slate-700 dark:text-slate-100">
-                        {row.customer}
+                        {row.client}
                       </span>
                     </div>
                   </td>
@@ -109,9 +106,11 @@ export const ShipmentTable = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`rounded border px-2 py-0.5 text-[10px] font-bold ${getStatusStyles(row.status)}`}
+                        className={`rounded border px-2 py-0.5 text-[10px] font-bold ${getStatusStyles(
+                          row.status
+                        )}`}
                       >
-                        {row.status}
+                        {getStatusLabel(row.status)}
                       </span>
                       <span className="text-xs text-slate-400 dark:text-slate-300">
                         — {row.driver}
@@ -131,12 +130,14 @@ export const ShipmentTable = ({
                       >
                         Assign
                       </button>
+
                       <button
                         onClick={() => onUpdateStatus(row.id)}
                         className="rounded border border-blue-100 bg-blue-50 px-3 py-1.5 text-[10px] font-bold text-blue-600 hover:bg-blue-600 hover:text-white dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
                       >
                         Status
                       </button>
+
                       <button className="rounded p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300">
                         <MoreVertical size={16} />
                       </button>
@@ -152,7 +153,7 @@ export const ShipmentTable = ({
                     <p>No shipments found</p>
                     <button
                       onClick={() => {
-                        onFilterChange("All");
+                        onFilterChange("ALL");
                         onSearchChange("");
                       }}
                       className="mt-2 text-xs font-bold text-blue-600 dark:text-blue-400"
@@ -187,9 +188,7 @@ export const ShipmentTable = ({
               key={p}
               onClick={() => onPageChange(p)}
               className={`h-7 w-7 rounded text-[11px] font-bold ${
-                p === currentPage
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-100 dark:hover:bg-slate-700"
+                p === currentPage ? "bg-blue-600 text-white" : "hover:bg-slate-100 dark:hover:bg-slate-700"
               }`}
             >
               {p}

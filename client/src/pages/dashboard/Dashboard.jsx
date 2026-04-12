@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import QuickAnalytics from "../../components/dashboard/QuickAnalytics";
+import QuickAnalyticsContainer from "../../components/dashboard/QuickAnalyticsContainer";
 import LiveMap from "../../components/dashboard/LiveMap";
 import ShipmentsTable from "../../components/dashboard/ShipmentsTable";
 import MessagesCards from "../../components/dashboard/MessagesCards";
+import { shipmentsMock } from "../../mocks/shipments.mock.js";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -13,7 +14,8 @@ const Dashboard = () => {
   const [showAssignDriver, setShowAssignDriver] = useState(false);
   const [showFleetOverview, setShowFleetOverview] = useState(false);
 
-  const handleExport = () => alert("Export started — implement CSV export when ready.");
+  const handleExport = () =>
+    alert("Export started — implement CSV export when ready.");
   const handleCreate = () => navigate("/dashboard/shipments-orders");
   const handleBulkUpload = () => setShowBulkUpload(true);
   const handleAssignDriver = () => setShowAssignDriver(true);
@@ -40,6 +42,7 @@ const Dashboard = () => {
             >
               {t("dashboard.export")}
             </button>
+
             <button
               onClick={handleCreate}
               className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white shadow hover:shadow-lg hover:bg-blue-700"
@@ -49,7 +52,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-       <MessagesCards />
+        {/* Messages summary cards */}
+        <MessagesCards />
 
         {/* Full-width Live Map + Analytics */}
         <div className="mt-6 space-y-6">
@@ -62,6 +66,7 @@ const Dashboard = () => {
                 {t("dashboard.liveMapDesc")}
               </p>
             </div>
+
             <div className="h-[520px] w-full overflow-hidden rounded-xl border border-slate-100 dark:border-slate-700 md:h-[420px]">
               <LiveMap />
             </div>
@@ -76,27 +81,18 @@ const Dashboard = () => {
                 Key metrics at a glance
               </p>
             </div>
-            <QuickAnalytics />
+
+            <QuickAnalyticsContainer />
           </div>
         </div>
 
+        {/* Recent Shipments (ONE card only: ShipmentsTable renders the card UI) */}
         <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-3">
-            <div className="h-full rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-                    Recent Shipments
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-300">
-                    Latest shipments and status
-                  </p>
-                </div>
-              </div>
-              <div className="overflow-auto">
-                <ShipmentsTable />
-              </div>
-            </div>
+            <ShipmentsTable
+              shipments={shipmentsMock}
+              onViewAll={() => navigate("/dashboard/shipments-orders")}
+            />
           </div>
         </div>
       </div>
@@ -105,7 +101,9 @@ const Dashboard = () => {
       {showBulkUpload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800">
-            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">Bulk Upload</h3>
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Bulk Upload
+            </h3>
             <p className="mb-4 text-sm text-slate-500 dark:text-slate-300">
               Upload CSV to import shipments (demo).
             </p>
@@ -124,7 +122,9 @@ const Dashboard = () => {
       {showAssignDriver && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800">
-            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">Assign Driver</h3>
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Assign Driver
+            </h3>
             <p className="mb-4 text-sm text-slate-500 dark:text-slate-300">
               Assign a driver to selected shipment (demo).
             </p>
@@ -143,7 +143,9 @@ const Dashboard = () => {
       {showFleetOverview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-slate-800">
-            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">Fleet Overview</h3>
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Fleet Overview
+            </h3>
             <p className="mb-4 text-sm text-slate-500 dark:text-slate-300">
               Open Fleet dashboard (demo).
             </p>

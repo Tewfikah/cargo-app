@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, ChevronRight, Check } from "lucide-react";
-import { ROLE_CONFIG } from "../constants";
+import { ROLE_CONFIG, USER_ROLE_LABELS } from "./constants";
 
 export const PermissionsSidebar = ({
   permissions = [],
@@ -22,13 +22,16 @@ export const PermissionsSidebar = ({
         <div className="space-y-4">
           {permissions.map((p) => {
             const config = ROLE_CONFIG[p.role] || {};
+            const label = USER_ROLE_LABELS[p.role] || p.role;
+
             return (
               <div key={p.role} className="flex items-center justify-between">
                 <button
-                  className={`flex-1 flex items-center space-x-2 rounded-lg border border-transparent px-3 py-2 text-sm font-semibold transition-all ${config.badgeColor || ""}`}
+                  type="button"
+                  className={`flex flex-1 items-center space-x-2 rounded-lg border border-transparent px-3 py-2 text-sm font-semibold transition-all ${config.badgeColor || ""}`}
                 >
                   {config.icon}
-                  <span>{p.role}</span>
+                  <span>{label}</span>
                 </button>
 
                 <div className="ml-4 flex items-center space-x-4">
@@ -37,6 +40,7 @@ export const PermissionsSidebar = ({
                       Shipments
                     </label>
                     <button
+                      type="button"
                       onClick={() => onPermissionChange(p.role, "manageShipments")}
                       className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${
                         p.permissions.manageShipments
@@ -53,6 +57,7 @@ export const PermissionsSidebar = ({
                       Vehicles
                     </label>
                     <button
+                      type="button"
                       onClick={() => onPermissionChange(p.role, "trackVehicles")}
                       className={`flex h-5 w-5 items-center justify-center rounded border transition-colors ${
                         p.permissions.trackVehicles
@@ -70,7 +75,10 @@ export const PermissionsSidebar = ({
         </div>
 
         <div className="mt-8 flex justify-center">
-          <button className="w-full rounded-lg bg-blue-700 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition-all active:scale-95 hover:bg-blue-800 dark:shadow-black/20">
+          <button
+            type="button"
+            className="w-full rounded-lg bg-blue-700 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition-all active:scale-95 hover:bg-blue-800 dark:shadow-black/20"
+          >
             Save Changes
           </button>
         </div>
@@ -86,12 +94,21 @@ export const PermissionsSidebar = ({
           {logs.slice(0, 3).map((log) => (
             <div key={log.id} className="flex space-x-3">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200">
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
                   <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
+
               <div className="min-w-0 flex-1">
                 <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-200">
                   <span className="cursor-pointer font-bold text-blue-600 hover:underline dark:text-blue-400">
@@ -109,6 +126,7 @@ export const PermissionsSidebar = ({
 
         <div className="mt-8 text-right">
           <button
+            type="button"
             onClick={onViewAllLogs}
             className="ml-auto flex items-center text-sm font-bold text-blue-600 hover:underline dark:text-blue-400"
           >

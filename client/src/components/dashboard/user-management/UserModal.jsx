@@ -1,24 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { USER_ROLES } from "../constants";
+import {
+  USER_ROLES,
+  USER_ROLE_LABELS,
+  USER_STATUS,
+  USER_STATUS_LABELS,
+} from "./constants";
 
 export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("Customer");
-  const [status, setStatus] = useState("Active");
+  const [role, setRole] = useState("CUSTOMER");
+  const [status, setStatus] = useState(USER_STATUS.ACTIVE);
 
   useEffect(() => {
     if (user) {
       setName(user.name || "");
       setEmail(user.email || "");
-      setRole(user.role || "Customer");
-      setStatus(user.status || "Active");
+      setRole(user.role || "CUSTOMER");
+      setStatus(user.status || USER_STATUS.ACTIVE);
     } else {
       setName("");
       setEmail("");
-      setRole("Customer");
-      setStatus("Active");
+      setRole("CUSTOMER");
+      setStatus(USER_STATUS.ACTIVE);
     }
   }, [user]);
 
@@ -37,6 +42,8 @@ export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
     onClose && onClose();
   };
 
+  const roleOptions = USER_ROLES.filter((r) => r !== "All");
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
       <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-800">
@@ -44,14 +51,19 @@ export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">
             {user ? "Edit User" : "Add User"}
           </h3>
-          <button onClick={onClose} className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
             <X className="h-4 w-4 text-slate-400 dark:text-slate-300" />
           </button>
         </div>
 
         <div className="space-y-3 p-4">
           <div>
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              Name
+            </label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -60,7 +72,9 @@ export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              Email
+            </label>
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -70,29 +84,33 @@ export const UserModal = ({ isOpen, onClose, user = null, onSave }) => {
 
           <div className="flex space-x-2">
             <div className="flex-1">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Role</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                Role
+              </label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className="mt-1 w-full rounded border p-2 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
               >
-                {USER_ROLES.filter((r) => r !== "All").map((r) => (
+                {roleOptions.map((r) => (
                   <option key={r} value={r}>
-                    {r}
+                    {USER_ROLE_LABELS[r] || r}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="w-40">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-200">Status</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                Status
+              </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="mt-1 w-full rounded border p-2 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
               >
-                <option>Active</option>
-                <option>Inactive</option>
+                <option value={USER_STATUS.ACTIVE}>{USER_STATUS_LABELS[USER_STATUS.ACTIVE]}</option>
+                <option value={USER_STATUS.INACTIVE}>{USER_STATUS_LABELS[USER_STATUS.INACTIVE]}</option>
               </select>
             </div>
           </div>

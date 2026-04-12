@@ -1,19 +1,15 @@
 import React from "react";
 import { X, Wrench, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 
-const mockLogs = [
-  { id: "1", date: "2024-04-20", description: "Oil change and brake inspection", status: "Completed" },
-  { id: "2", date: "2024-03-15", description: "Replaced windshield and air filters", status: "Awaiting Parts" },
-  { id: "3", date: "2024-02-28", description: "Engine diagnostics due to check engine light", status: "In Progress" },
-];
+const MaintenanceModal = ({
+  vehicleId,
+  onClose = () => {},
+  inline = false,
 
-const mockActivities = [
-  { id: "a1", description: "Brakes replaced, tires rotated", date: "01/09/2024" },
-  { id: "a2", description: "Routine inspection completed", date: "11/10/2023" },
-  { id: "a3", description: "Fuel filter replaced", date: "09/10/2023" },
-];
-
-const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => {
+  // ✅ NEW: backend-ready props
+  logs = [],
+  activities = [],
+}) => {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Completed":
@@ -27,6 +23,9 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
     }
   };
 
+  const safeLogs = Array.isArray(logs) ? logs : [];
+  const safeActivities = Array.isArray(activities) ? activities : [];
+
   if (inline) {
     return (
       <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
@@ -36,13 +35,18 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
               <Wrench className="h-5 w-5 text-slate-600 dark:text-slate-200" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Maintenance</h3>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+                Maintenance
+              </h3>
               <p className="text-xs uppercase text-slate-500 dark:text-slate-300">
                 {vehicleId || "Select a vehicle"}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -52,30 +56,61 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
             <>
               <div className="text-sm text-slate-600 dark:text-slate-300">
                 Showing maintenance log for{" "}
-                <span className="font-medium text-slate-800 dark:text-white">{vehicleId}</span>
+                <span className="font-medium text-slate-800 dark:text-white">
+                  {vehicleId}
+                </span>
               </div>
 
               <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
                 <table className="w-full text-left">
                   <thead className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50">
                     <tr>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Date</th>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Description</th>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Status</th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                        Date
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                        Description
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                        Status
+                      </th>
                     </tr>
                   </thead>
+
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                    {mockLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                        <td className="px-3 py-2 text-sm text-slate-500 dark:text-slate-300">{log.date}</td>
-                        <td className="px-3 py-2 text-sm text-slate-700 dark:text-slate-200">{log.description}</td>
-                        <td className="px-3 py-2">
-                          <span className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(log.status)}`}>
-                            {log.status}
-                          </span>
+                    {safeLogs.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="px-3 py-6 text-sm text-slate-500 dark:text-slate-300"
+                        >
+                          No maintenance logs yet.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      safeLogs.map((log) => (
+                        <tr
+                          key={log.id}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-700/40"
+                        >
+                          <td className="px-3 py-2 text-sm text-slate-500 dark:text-slate-300">
+                            {log.date}
+                          </td>
+                          <td className="px-3 py-2 text-sm text-slate-700 dark:text-slate-200">
+                            {log.description}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(
+                                log.status
+                              )}`}
+                            >
+                              {log.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -106,6 +141,7 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
     );
   }
 
+  // non-inline modal version (kept, but also uses props)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40" onClick={onClose} />
@@ -117,12 +153,19 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
               <Wrench className="h-5 w-5 text-slate-600 dark:text-slate-200" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800 dark:text-white">Maintenance Log</h2>
-              <p className="text-xs uppercase text-slate-500 dark:text-slate-300">{vehicleId}</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+                Maintenance Log
+              </h2>
+              <p className="text-xs uppercase text-slate-500 dark:text-slate-300">
+                {vehicleId}
+              </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
             <X className="h-6 w-6" />
           </button>
         </header>
@@ -132,23 +175,42 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
             <table className="w-full text-left">
               <thead className="border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50">
                 <tr>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Description</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                    Date
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                    Description
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase text-slate-500 dark:text-slate-300">
+                    Status
+                  </th>
                 </tr>
               </thead>
+
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                {mockLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-300">{log.date}</td>
-                    <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{log.description}</td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(log.status)}`}>
-                        {log.status}
-                      </span>
+                {safeLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="px-4 py-6 text-sm text-slate-500 dark:text-slate-300">
+                      No maintenance logs yet.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  safeLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                      <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-300">
+                        {log.date}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">
+                        {log.description}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`rounded-md border px-2 py-1 text-[10px] font-bold ${getStatusBadge(log.status)}`}>
+                          {log.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -157,20 +219,34 @@ const MaintenanceModal = ({ vehicleId, onClose = () => {}, inline = false }) => 
             <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white">
               <Clock className="h-4 w-4" /> Recent Activities
             </h3>
-            <ul className="space-y-3">
-              {mockActivities.map((activity) => (
-                <li key={activity.id} className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
-                  <span>{activity.description}</span>
-                  <span className="text-xs text-slate-400 dark:text-slate-400">{activity.date}</span>
-                </li>
-              ))}
-            </ul>
+
+            {safeActivities.length === 0 ? (
+              <p className="text-sm text-slate-500 dark:text-slate-300">
+                No activities yet.
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {safeActivities.map((activity) => (
+                  <li
+                    key={activity.id}
+                    className="flex justify-between text-sm text-slate-600 dark:text-slate-300"
+                  >
+                    <span>{activity.description}</span>
+                    <span className="text-xs text-slate-400 dark:text-slate-400">
+                      {activity.date}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           <div className="flex gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
             <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-300" />
             <div>
-              <p className="font-semibold text-blue-900 dark:text-blue-200">Upcoming Service</p>
+              <p className="font-semibold text-blue-900 dark:text-blue-200">
+                Upcoming Service
+              </p>
               <p className="text-sm text-blue-700 dark:text-blue-300">
                 Next scheduled maintenance is in 1,200 miles or on June 15, 2024.
               </p>
