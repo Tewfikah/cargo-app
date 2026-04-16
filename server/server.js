@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
@@ -19,6 +20,16 @@ app.use(
   })
 );
 app.use(express.json());
+
+
+
+const contactLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 5, // max 5 requests per IP per 10 minutes
+  standardHeaders: true, // return rate limit info in headers
+  legacyHeaders: false,
+  message: { ok: false, message: "Too many messages. Please try again later." },
+});
 
 // --------------------
 // Helpers
@@ -151,7 +162,7 @@ app.post("/api/auth/login", async (req, res) => {
 // --------------------
 // Contact: create message (Prisma)
 // --------------------
-app.post("/api/contact", async (req, res) => {
+app.post("/api/contact", contactLimiter, async (req, res) => {
   try {
     const { name, email, subject, message } = req.body || {};
 
