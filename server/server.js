@@ -3,13 +3,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
 import rateLimit from "express-rate-limit";
+
+import { prisma } from "./src/prisma.js";
+import adminVehiclesRoutes from "./src/routes/admin.vehicles.routes.js";
+import adminShipmentsRoutes from "./src/routes/admin.shipments.routes.js";
+import adminUsersRoutes from "./src/routes/admin.users.routes.js";
 
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 
 // --------------------
 // Middleware
@@ -21,12 +24,11 @@ app.use(
 );
 app.use(express.json());
 
-
-
+// Rate limit for contact form
 const contactLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 5, // max 5 requests per IP per 10 minutes
-  standardHeaders: true, // return rate limit info in headers
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
   legacyHeaders: false,
   message: { ok: false, message: "Too many messages. Please try again later." },
 });
@@ -39,7 +41,9 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
 const getRoleByEmail = (email) => {
-  return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? "ADMIN" : "CUSTOMER";
+  return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+    ? "ADMIN"
+    : "CUSTOMER";
 };
 
 const createToken = (user) => {
@@ -60,7 +64,7 @@ const requireAuth = (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload; // { sub, role, email, iat, exp }
+    req.user = payload;
     return next();
   } catch {
     return res.status(401).json({ ok: false, message: "Invalid token" });
@@ -73,6 +77,11 @@ const requireAdmin = (req, res, next) => {
   }
   return next();
 };
+
+// ✅ Mount admin vehicles router AFTER requireAuth/requireAdmin exist
+app.use("/api/admin/vehicles", requireAuth, requireAdmin, adminVehiclesRoutes);
+app.use("/api/admin/shipments", requireAuth, requireAdmin, adminShipmentsRoutes);
+app.use("/api/admin/users", requireAuth, requireAdmin, adminUsersRoutes);
 
 // --------------------
 // Health
@@ -99,7 +108,9 @@ app.post("/api/auth/register", async (req, res) => {
     });
 
     if (existing) {
-      return res.status(409).json({ ok: false, message: "Email already registered" });
+      return res
+        .status(409)
+        .json({ ok: false, message: "Email already registered" });
     }
 
     const role = getRoleByEmail(email);
@@ -138,12 +149,16 @@ app.post("/api/auth/login", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).json({ ok: false, message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ ok: false, message: "Invalid email or password" });
     }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) {
-      return res.status(401).json({ ok: false, message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ ok: false, message: "Invalid email or password" });
     }
 
     const accessToken = createToken(user);
@@ -167,7 +182,9 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
     const { name, email, subject, message } = req.body || {};
 
     if (!name || !email || !subject || !message) {
-      return res.status(400).json({ ok: false, message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ ok: false, message: "All fields are required" });
     }
 
     const msg = await prisma.message.create({
@@ -191,9 +208,7 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
 // Admin: messages (protected)
 // --------------------
 app.get("/api/admin/messages", requireAuth, requireAdmin, async (_req, res) => {
-  const data = await prisma.message.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const data = await prisma.message.findMany({ orderBy: { createdAt: "desc" } });
   return res.json({ ok: true, data });
 });
 
@@ -221,42 +236,15 @@ app.delete("/api/admin/messages/:id", requireAuth, requireAdmin, async (req, res
 });
 
 // --------------------
-// Demo endpoints (still in-memory for now)
-// --------------------
-const vehicleLocations = [
-  { id: "veh_1", name: "Truck A", lat: 9.03, lng: 38.74, status: "IN_TRANSIT", updatedAt: new Date().toISOString() },
-  { id: "veh_2", name: "Truck B", lat: 8.98, lng: 38.79, status: "DELIVERING", updatedAt: new Date().toISOString() },
-  { id: "veh_3", name: "Truck C", lat: 9.05, lng: 38.76, status: "IDLE", updatedAt: new Date().toISOString() },
-];
-
-app.get("/api/admin/vehicles/locations", requireAuth, requireAdmin, (req, res) => {
-  return res.json({ ok: true, data: vehicleLocations });
-});
-
-app.get("/api/admin/analytics/quick", requireAuth, requireAdmin, (req, res) => {
-  return res.json({
-    ok: true,
-    data: {
-      kpis: {
-        todayDeliveries: { value: 24, delta: "+8%", trend: "up" },
-        avgEta: { value: "1h 22m", delta: "-3%", trend: "up" },
-        fuelAvg: { value: 105, delta: "+2%", trend: "down" },
-      },
-    },
-  });
-});
-
-// --------------------
 // Start
 // --------------------
 const PORT = process.env.PORT || 5000;
 
 async function start() {
-  // quick check: make sure Prisma can connect
   await prisma.$connect();
   console.log("✅ Prisma connected (Supabase/Postgres)");
 
-  // Optional: seed admin if not exists
+  // Seed admin once
   if (ADMIN_EMAIL && ADMIN_PASSWORD) {
     const adminEmail = ADMIN_EMAIL.toLowerCase();
     const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
@@ -264,12 +252,7 @@ async function start() {
     if (!existing) {
       const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
       await prisma.user.create({
-        data: {
-          name: "Admin",
-          email: adminEmail,
-          passwordHash,
-          role: "ADMIN",
-        },
+        data: { name: "Admin", email: adminEmail, passwordHash, role: "ADMIN" },
       });
       console.log("✅ Seeded admin user:", adminEmail);
     }

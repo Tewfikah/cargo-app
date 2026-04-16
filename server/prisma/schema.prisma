@@ -13,9 +13,19 @@ model User {
   name         String
   email        String   @unique
   passwordHash String
-  role         String   @default("CUSTOMER") // ADMIN or CUSTOMER
+
+  // Roles match your frontend/backend codes
+  role         String   @default("CUSTOMER") // ADMIN | CUSTOMER | DRIVER
+
+  // ✅ NEW: status for User Management page
+  status       String   @default("ACTIVE")   // ACTIVE | INACTIVE
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  // relations
+  vehicles     Vehicle[]
+  shipments    Shipment[]
 }
 
 model Message {
@@ -26,4 +36,45 @@ model Message {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Vehicle {
+  id        String   @id @default(cuid())
+
+  // What you show in UI like TRK-1021
+  vehicleNo String   @unique
+
+  type      String
+  status    String   @default("AVAILABLE") // AVAILABLE | IN_TRANSIT | MAINTENANCE
+
+  driverName String?  // optional display field
+  lastSeen   String?  // optional display field
+
+  // Optional: connect vehicle to a User (driver)
+  driverId  String?
+  driver    User?     @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Shipment {
+  id          String   @id @default(cuid())
+
+  // What you show in UI like SH-1021 or #SHP-001
+  shipmentNo  String   @unique
+
+  client      String
+  origin      String
+  destination String
+
+  status      String   @default("PENDING") // PENDING | IN_TRANSIT | DELIVERED | DELAYED
+  eta         String?  // optional display field
+
+  driverName  String?  // optional display field
+  driverId    String?
+  driver      User?    @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
