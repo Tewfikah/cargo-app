@@ -5,7 +5,7 @@ import logo from "../assets/logo.png";
 import { Mail, Lock, User } from "lucide-react";
 import { useAuth } from "../AuthContext";
 
-const ADMIN_ROLE = "Admin";
+const ADMIN_ROLE = "ADMIN";
 
 const Login = () => {
   const { t } = useTranslation();
