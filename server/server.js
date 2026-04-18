@@ -40,12 +40,6 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
-const getRoleByEmail = (email) => {
-  return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
-    ? "ADMIN"
-    : "CUSTOMER";
-};
-
 const createToken = (user) => {
   return jwt.sign(
     { sub: user.id, role: user.role, email: user.email },
@@ -78,7 +72,9 @@ const requireAdmin = (req, res, next) => {
   return next();
 };
 
-// ✅ Mount admin vehicles router AFTER requireAuth/requireAdmin exist
+// --------------------
+// Admin routers (protected)
+// --------------------
 app.use("/api/admin/vehicles", requireAuth, requireAdmin, adminVehiclesRoutes);
 app.use("/api/admin/shipments", requireAuth, requireAdmin, adminShipmentsRoutes);
 app.use("/api/admin/users", requireAuth, requireAdmin, adminUsersRoutes);
@@ -103,8 +99,18 @@ app.post("/api/auth/register", async (req, res) => {
         .json({ ok: false, message: "name, email, password are required" });
     }
 
+    const emailLower = String(email).toLowerCase().trim();
+
+    // ✅ Block admin creation via public registration
+    if (ADMIN_EMAIL && emailLower === ADMIN_EMAIL.toLowerCase()) {
+      return res.status(403).json({
+        ok: false,
+        message: "Admin accounts cannot be created from public registration.",
+      });
+    }
+
     const existing = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: emailLower },
     });
 
     if (existing) {
@@ -113,15 +119,17 @@ app.post("/api/auth/register", async (req, res) => {
         .json({ ok: false, message: "Email already registered" });
     }
 
-    const role = getRoleByEmail(email);
-    const passwordHash = await bcrypt.hash(password, 10);
+    // ✅ Public registration always creates CUSTOMER (drivers cannot self-register)
+    const passwordHash = await bcrypt.hash(String(password), 10);
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email: email.toLowerCase(),
+        name: String(name).trim(),
+        email: emailLower,
         passwordHash,
-        role,
+        role: "CUSTOMER",
+        // If your schema has status with default ACTIVE, you can omit this.
+        // status: "ACTIVE",
       },
       select: { id: true, name: true, email: true, role: true },
     });
@@ -144,8 +152,10 @@ app.post("/api/auth/login", async (req, res) => {
         .json({ ok: false, message: "email and password are required" });
     }
 
+    const emailLower = String(email).toLowerCase().trim();
+
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: emailLower },
     });
 
     if (!user) {
@@ -154,7 +164,7 @@ app.post("/api/auth/login", async (req, res) => {
         .json({ ok: false, message: "Invalid email or password" });
     }
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
+    const ok = await bcrypt.compare(String(password), user.passwordHash);
     if (!ok) {
       return res
         .status(401)
@@ -189,10 +199,10 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
 
     const msg = await prisma.message.create({
       data: {
-        name,
-        email: email.toLowerCase(),
-        subject,
-        message,
+        name: String(name).trim(),
+        email: String(email).toLowerCase().trim(),
+        subject: String(subject).trim(),
+        message: String(message).trim(),
         read: false,
       },
     });
@@ -244,7 +254,7 @@ async function start() {
   await prisma.$connect();
   console.log("✅ Prisma connected (Supabase/Postgres)");
 
-  // Seed admin once
+  // Seed admin once (from .env)
   if (ADMIN_EMAIL && ADMIN_PASSWORD) {
     const adminEmail = ADMIN_EMAIL.toLowerCase();
     const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
@@ -252,7 +262,13 @@ async function start() {
     if (!existing) {
       const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
       await prisma.user.create({
-        data: { name: "Admin", email: adminEmail, passwordHash, role: "ADMIN" },
+        data: {
+          name: "Admin",
+          email: adminEmail,
+          passwordHash,
+          role: "ADMIN",
+          // status: "ACTIVE", // if your schema has it
+        },
       });
       console.log("✅ Seeded admin user:", adminEmail);
     }
