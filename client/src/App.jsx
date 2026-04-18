@@ -15,7 +15,12 @@ import UserManagement from "./pages/dashboard/UserManagement";
 import SystemSettings from "./pages/dashboard/SystemSettings";
 import Messages from "./pages/dashboard/Messages";
 
+import UserDashboard from "./pages/user/UserDashboard";
+import DriverDashboard from "./pages/driver/DriverDashboard";
+
 import RequireAdmin from "./guards/RequireAdmin";
+import RequireAuth from "./guards/RequireAuth";
+import RequireDriver from "./guards/RequireDriver";
 
 const App = () => {
   return (
@@ -27,6 +32,13 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
+
+            <Route element={<RequireAuth />}>
+          <Route path="/user-dashboard" element={<UserDashboard />} />
+           </Route>
+         <Route element={<RequireDriver />}>
+          <Route path="/driver-dashboard" element={<DriverDashboard />} />
+       </Route>
 
         {/* Admin Protected Routes */}
         <Route element={<RequireAdmin />}>

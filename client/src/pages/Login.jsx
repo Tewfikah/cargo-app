@@ -6,6 +6,7 @@ import { Mail, Lock, User } from "lucide-react";
 import { useAuth } from "../AuthContext";
 
 const ADMIN_ROLE = "ADMIN";
+const DRIVER_ROLE = "DRIVER";
 
 const Login = () => {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ const Login = () => {
   const location = useLocation();
   const { login, register } = useAuth();
 
-  // if user tried to open /dashboard/... before login
+  // If user tried to open /dashboard/... before login
   const from = location.state?.from; // example: "/dashboard/user-management"
 
   const [isSignup, setIsSignup] = useState(false);
@@ -33,6 +34,27 @@ const Login = () => {
     setSuccess("");
   };
 
+  const redirectByRole = (u) => {
+    // ADMIN
+    if (u?.role === ADMIN_ROLE) {
+      if (from && from.startsWith("/dashboard")) {
+        navigate(from, { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
+      return;
+    }
+
+    // DRIVER
+    if (u?.role === DRIVER_ROLE) {
+      navigate("/driver-dashboard", { replace: true });
+      return;
+    }
+
+    // CUSTOMER (default)
+    navigate("/user-dashboard", { replace: true });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     resetMessages();
@@ -44,37 +66,14 @@ const Login = () => {
       if (isSignup) {
         // REGISTER
         user = await register({ name, email, password });
-
-        // Customer: success then home
-        if (user?.role !== ADMIN_ROLE) {
-          setSuccess("Account created successfully. Redirecting to home...");
-          setTimeout(() => navigate("/", { replace: true }), 1200);
-          return;
-        }
-
-        // Admin: go back to requested dashboard page OR dashboard home
-        if (from && from.startsWith("/dashboard")) {
-          navigate(from, { replace: true });
-        } else {
-          navigate("/dashboard", { replace: true });
-        }
+        setSuccess("Account created successfully. Redirecting...");
+        setTimeout(() => redirectByRole(user), 400);
         return;
       }
 
       // LOGIN
       user = await login({ email, password });
-
-      if (user?.role === ADMIN_ROLE) {
-        // Admin: go back to requested dashboard page OR dashboard home
-        if (from && from.startsWith("/dashboard")) {
-          navigate(from, { replace: true });
-        } else {
-          navigate("/dashboard", { replace: true });
-        }
-      } else {
-        // Customer always home (your requirement)
-        navigate("/", { replace: true });
-      }
+      redirectByRole(user);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
