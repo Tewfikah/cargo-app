@@ -10,7 +10,9 @@ import adminVehiclesRoutes from "./src/routes/admin.vehicles.routes.js";
 import adminShipmentsRoutes from "./src/routes/admin.shipments.routes.js";
 import adminUsersRoutes from "./src/routes/admin.users.routes.js";
 import userShipmentsRoutes from "./src/routes/user.shipments.routes.js";
-
+import userRequestsRoutes from "./src/routes/user.requests.routes.js";
+import adminRequestsRoutes from "./src/routes/admin.requests.routes.js";
+import adminDriversRoutes from "./src/routes/admin.drivers.routes.js";
 dotenv.config();
 
 const app = express();
@@ -111,11 +113,13 @@ const requireCustomer = (req, res, next) => {
 app.use("/api/admin/vehicles", requireAuth, requireAdmin, adminVehiclesRoutes);
 app.use("/api/admin/shipments", requireAuth, requireAdmin, adminShipmentsRoutes);
 app.use("/api/admin/users", requireAuth, requireAdmin, adminUsersRoutes);
-
+app.use("/api/admin/drivers", requireAuth, requireAdmin, adminDriversRoutes);
 // --------------------
 // User routers (protected)
 // --------------------
 app.use("/api/user/shipments", requireAuth, requireCustomer, userShipmentsRoutes);
+app.use("/api/user/requests", requireAuth, requireCustomer, userRequestsRoutes);
+app.use("/api/admin/requests", requireAuth, requireAdmin, adminRequestsRoutes);
 
 // --------------------
 // Health

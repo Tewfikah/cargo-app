@@ -29,6 +29,9 @@ model User {
 
   // Shipments where this user is the CUSTOMER/owner
   customerShipments Shipment[] @relation("CustomerShipments")
+
+  // ✅ NEW: Requests created by this customer
+  shipmentRequests ShipmentRequest[]
 }
 
 model Message {
@@ -91,4 +94,35 @@ model Shipment {
 
   @@index([driverId])
   @@index([customerId])
+}
+
+//
+// ✅ NEW MODEL: ShipmentRequest (customer order / request)
+// Admin will approve and then create a real Shipment
+//
+model ShipmentRequest {
+  id String @id @default(cuid())
+
+  // easy human-readable request number
+  requestNo String @unique
+
+  origin      String
+  destination String
+
+  cargoType String?
+  weightKg  Float?
+  notes     String?
+
+  // NEW | APPROVED | REJECTED
+  status String @default("NEW")
+
+  // who created this request
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
 }
