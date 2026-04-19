@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -14,8 +14,8 @@ const Login = () => {
   const location = useLocation();
   const { login, register } = useAuth();
 
-  // If user tried to open /dashboard/... before login
   const from = location.state?.from; // example: "/dashboard/user-management"
+  const isDriverLogin = location.pathname === "/driver-login";
 
   const [isSignup, setIsSignup] = useState(false);
 
@@ -29,13 +29,17 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // If user opens /driver-login, force login-only mode
+  useEffect(() => {
+    if (isDriverLogin) setIsSignup(false);
+  }, [isDriverLogin]);
+
   const resetMessages = () => {
     setError("");
     setSuccess("");
   };
 
   const redirectByRole = (u) => {
-    // ADMIN
     if (u?.role === ADMIN_ROLE) {
       if (from && from.startsWith("/dashboard")) {
         navigate(from, { replace: true });
@@ -45,13 +49,11 @@ const Login = () => {
       return;
     }
 
-    // DRIVER
     if (u?.role === DRIVER_ROLE) {
       navigate("/driver-dashboard", { replace: true });
       return;
     }
 
-    // CUSTOMER (default)
     navigate("/user-dashboard", { replace: true });
   };
 
@@ -63,8 +65,11 @@ const Login = () => {
     try {
       let user;
 
-      if (isSignup) {
-        // REGISTER
+      // Driver login page must never register
+      if (isDriverLogin && isSignup) setIsSignup(false);
+
+      if (isSignup && !isDriverLogin) {
+        // REGISTER (customers)
         user = await register({ name, email, password });
         setSuccess("Account created successfully. Redirecting...");
         setTimeout(() => redirectByRole(user), 400);
@@ -90,9 +95,15 @@ const Login = () => {
         </div>
 
         {/* Title */}
-        <h2 className="mb-4 text-center text-2xl font-bold text-slate-900 dark:text-white">
-          {isSignup ? t("login.signup") : t("login.login")}
+        <h2 className="mb-2 text-center text-2xl font-bold text-slate-900 dark:text-white">
+          {isDriverLogin ? "Driver Login" : isSignup ? t("login.signup") : t("login.login")}
         </h2>
+
+        {isDriverLogin && (
+          <p className="mb-5 text-center text-sm text-slate-500 dark:text-slate-300">
+            Drivers: Your account is created by Admin. Please login with your email and password.
+          </p>
+        )}
 
         {/* Error / Success */}
         {error && (
@@ -109,7 +120,7 @@ const Login = () => {
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Name Input (Sign Up only) */}
-          {isSignup && (
+          {isSignup && !isDriverLogin && (
             <div className="relative">
               <User className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 dark:text-slate-400" />
               <input
@@ -161,10 +172,10 @@ const Login = () => {
             className="w-full rounded-lg bg-blue-600 py-3 text-lg font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-70"
           >
             {loading
-              ? isSignup
+              ? isSignup && !isDriverLogin
                 ? "Creating..."
                 : "Logging in..."
-              : isSignup
+              : isSignup && !isDriverLogin
               ? t("login.register")
               : t("login.login")}
           </button>
@@ -172,31 +183,24 @@ const Login = () => {
 
         {/* Footer Links */}
         <div className="mt-6 text-center text-base text-slate-600 dark:text-slate-300">
-          {!isSignup ? (
-            <>
-              <p className="mb-2">
-                {t("login.noAccount")}{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSignup(true);
-                    resetMessages();
-                  }}
-                  className="text-blue-600 hover:underline dark:text-blue-400"
-                >
-                  {t("login.register")}
-                </button>
-              </p>
-
-              <Link
-                to="/forgot-password"
+          {!isDriverLogin && !isSignup && (
+            <p className="mb-2">
+              {t("login.noAccount")}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignup(true);
+                  resetMessages();
+                }}
                 className="text-blue-600 hover:underline dark:text-blue-400"
               >
-                {t("login.forgot")}
-              </Link>
-            </>
-          ) : (
-            <p>
+                {t("login.register")}
+              </button>
+            </p>
+          )}
+
+          {!isDriverLogin && isSignup && (
+            <p className="mb-2">
               {t("login.haveAccount")}{" "}
               <button
                 type="button"
@@ -209,6 +213,21 @@ const Login = () => {
                 {t("login.login")}
               </button>
             </p>
+          )}
+
+          <Link
+            to="/forgot-password"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            {t("login.forgot")}
+          </Link>
+
+          {isDriverLogin && (
+            <div className="mt-4 text-sm">
+              <Link to="/login" className="text-blue-600 hover:underline dark:text-blue-400">
+                Customer login / register
+              </Link>
+            </div>
           )}
         </div>
       </div>

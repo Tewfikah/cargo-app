@@ -16,11 +16,13 @@ import SystemSettings from "./pages/dashboard/SystemSettings";
 import Messages from "./pages/dashboard/Messages";
 
 import UserDashboard from "./pages/user/UserDashboard";
+import MyShipments from "./pages/user/MyShipments";
+import ShipmentDetails from "./pages/user/ShipmentDetails"; // ✅ NEW
 import DriverDashboard from "./pages/driver/DriverDashboard";
 
 import RequireAdmin from "./guards/RequireAdmin";
-import RequireAuth from "./guards/RequireAuth";
 import RequireDriver from "./guards/RequireDriver";
+import RequireCustomer from "./guards/RequireCustomer";
 
 const App = () => {
   return (
@@ -30,15 +32,21 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/driver-login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
 
-            <Route element={<RequireAuth />}>
+        {/* Customer Protected Routes */}
+        <Route element={<RequireCustomer />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
-           </Route>
-         <Route element={<RequireDriver />}>
+          <Route path="/my-shipments" element={<MyShipments />} />
+          <Route path="/my-shipments/:id" element={<ShipmentDetails />} /> {/* ✅ NEW */}
+        </Route>
+
+        {/* Driver Protected Routes */}
+        <Route element={<RequireDriver />}>
           <Route path="/driver-dashboard" element={<DriverDashboard />} />
-       </Route>
+        </Route>
 
         {/* Admin Protected Routes */}
         <Route element={<RequireAdmin />}>

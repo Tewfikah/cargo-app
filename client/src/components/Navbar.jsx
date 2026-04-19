@@ -25,17 +25,15 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
 
-  const isAdmin = user?.role === "ADMIN";
+  const role = user?.role; // "ADMIN" | "CUSTOMER" | "DRIVER"
   const hideNavbar = location.pathname.startsWith("/dashboard");
 
   const closeMenu = () => setMenuOpen(false);
 
-  // ✅ Close the mobile menu automatically when route changes
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // ✅ Prevent page scrolling behind the drawer
   useEffect(() => {
     if (!menuOpen) return;
     const prev = document.body.style.overflow;
@@ -51,12 +49,22 @@ const Navbar = () => {
     navigate("/");
   };
 
+  // ✅ One function: takes user to the correct dashboard
   const handleGoDashboard = () => {
     closeMenu();
-    navigate("/dashboard");
+
+    if (role === "ADMIN") {
+      navigate("/dashboard");
+      return;
+    }
+    if (role === "DRIVER") {
+      navigate("/driver-dashboard");
+      return;
+    }
+    // CUSTOMER default
+    navigate("/user-dashboard");
   };
 
-  // ✅ IMPORTANT: return null AFTER hooks (prevents weird refresh/blank issues)
   if (hideNavbar) return null;
 
   return (
@@ -133,15 +141,14 @@ const Navbar = () => {
                   Welcome, {user?.name || "User"}
                 </span>
 
-                {isAdmin && (
-                  <button
-                    type="button"
-                    onClick={handleGoDashboard}
-                    className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
-                  >
-                    Dashboard
-                  </button>
-                )}
+                {/* ✅ Dashboard button for ALL logged-in users */}
+                <button
+                  type="button"
+                  onClick={handleGoDashboard}
+                  className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
+                >
+                  Dashboard
+                </button>
 
                 <button
                   type="button"
@@ -282,16 +289,15 @@ const Navbar = () => {
               <div className="mt-auto border-t border-slate-200 p-4 dark:border-slate-800">
                 {isAuthenticated ? (
                   <div className="flex flex-col gap-2">
-                    {isAdmin && (
-                      <button
-                        type="button"
-                        onClick={handleGoDashboard}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700"
-                      >
-                        <LayoutDashboard size={18} />
-                        Dashboard
-                      </button>
-                    )}
+                    {/* ✅ Dashboard button for ALL logged-in users */}
+                    <button
+                      type="button"
+                      onClick={handleGoDashboard}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700"
+                    >
+                      <LayoutDashboard size={18} />
+                      Dashboard
+                    </button>
 
                     <button
                       type="button"
