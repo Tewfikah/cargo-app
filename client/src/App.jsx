@@ -15,6 +15,7 @@ import UserManagement from "./pages/dashboard/UserManagement";
 import SystemSettings from "./pages/dashboard/SystemSettings";
 import Messages from "./pages/dashboard/Messages";
 
+
 import UserDashboard from "./pages/user/UserDashboard";
 import MyShipments from "./pages/user/MyShipments";
 import ShipmentDetails from "./pages/user/ShipmentDetails"; // ✅ NEW
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="user-management" element={<UserManagement />} />
             <Route path="system-settings" element={<SystemSettings />} />
             <Route path="messages" element={<Messages />} />
+            
           </Route>
         </Route>
       </Routes>
