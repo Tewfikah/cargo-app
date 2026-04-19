@@ -9,23 +9,26 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String @unique
   passwordHash String
 
   // Roles match your frontend/backend codes
-  role         String   @default("CUSTOMER") // ADMIN | CUSTOMER | DRIVER
+  role   String @default("CUSTOMER") // ADMIN | CUSTOMER | DRIVER
+  status String @default("ACTIVE") // ACTIVE | INACTIVE
 
-  // ✅ NEW: status for User Management page
-  status       String   @default("ACTIVE")   // ACTIVE | INACTIVE
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // relations
-  vehicles     Vehicle[]
-  shipments    Shipment[]
+  vehicles Vehicle[] @relation("DriverVehicles")
+
+  // Shipments where this user is the DRIVER
+  driverShipments Shipment[] @relation("DriverShipments")
+
+  // Shipments where this user is the CUSTOMER/owner
+  customerShipments Shipment[] @relation("CustomerShipments")
 }
 
 model Message {
@@ -39,42 +42,53 @@ model Message {
 }
 
 model Vehicle {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // What you show in UI like TRK-1021
-  vehicleNo String   @unique
+  vehicleNo String @unique
 
-  type      String
-  status    String   @default("AVAILABLE") // AVAILABLE | IN_TRANSIT | MAINTENANCE
+  type   String
+  status String @default("AVAILABLE") // AVAILABLE | IN_TRANSIT | MAINTENANCE
 
-  driverName String?  // optional display field
-  lastSeen   String?  // optional display field
+  driverName String?
+  lastSeen   String?
 
   // Optional: connect vehicle to a User (driver)
-  driverId  String?
-  driver    User?     @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  driverId String?
+  driver   User?   @relation("DriverVehicles", fields: [driverId], references: [id], onDelete: SetNull)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([driverId])
 }
 
 model Shipment {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // What you show in UI like SH-1021 or #SHP-001
-  shipmentNo  String   @unique
+  shipmentNo String @unique
 
   client      String
   origin      String
   destination String
 
-  status      String   @default("PENDING") // PENDING | IN_TRANSIT | DELIVERED | DELAYED
-  eta         String?  // optional display field
+  status String  @default("PENDING") // PENDING | IN_TRANSIT | DELIVERED | DELAYED
+  eta    String?
 
-  driverName  String?  // optional display field
-  driverId    String?
-  driver      User?    @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  driverName String?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  // Driver relation (named)
+  driverId String?
+  driver   User?   @relation("DriverShipments", fields: [driverId], references: [id], onDelete: SetNull)
+
+  // Customer relation (named) — optional so old records won’t break
+  customerId String?
+  customer   User?   @relation("CustomerShipments", fields: [customerId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([driverId])
+  @@index([customerId])
 }

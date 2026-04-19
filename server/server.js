@@ -9,6 +9,7 @@ import { prisma } from "./src/prisma.js";
 import adminVehiclesRoutes from "./src/routes/admin.vehicles.routes.js";
 import adminShipmentsRoutes from "./src/routes/admin.shipments.routes.js";
 import adminUsersRoutes from "./src/routes/admin.users.routes.js";
+import userShipmentsRoutes from "./src/routes/user.shipments.routes.js";
 
 dotenv.config();
 
@@ -17,11 +18,36 @@ const app = express();
 // --------------------
 // Middleware
 // --------------------
+
+// ✅ Robust origin parsing (supports comma list + removes quotes)
+const normalizeOrigin = (v) => String(v || "").trim().replace(/\/$/, "");
+const stripQuotes = (v) => String(v || "").trim().replace(/^['"]|['"]$/g, "");
+
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((x) => normalizeOrigin(stripQuotes(x)))
+  .filter(Boolean);
+
+// Debug print (so we KNOW what the server is allowing)
+console.log("✅ CORS allowed origins:", allowedOrigins);
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: (origin, cb) => {
+      // allow requests with no origin (Postman, curl)
+      if (!origin) return cb(null, true);
+
+      const incoming = normalizeOrigin(origin);
+
+      if (allowedOrigins.includes(incoming)) return cb(null, true);
+
+      return cb(new Error("CORS blocked: " + incoming));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 
 // Rate limit for contact form
@@ -58,7 +84,7 @@ const requireAuth = (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
+    req.user = payload; // { sub, role, email }
     return next();
   } catch {
     return res.status(401).json({ ok: false, message: "Invalid token" });
@@ -72,12 +98,24 @@ const requireAdmin = (req, res, next) => {
   return next();
 };
 
+const requireCustomer = (req, res, next) => {
+  if (req.user?.role !== "CUSTOMER") {
+    return res.status(403).json({ ok: false, message: "Customer only" });
+  }
+  return next();
+};
+
 // --------------------
 // Admin routers (protected)
 // --------------------
 app.use("/api/admin/vehicles", requireAuth, requireAdmin, adminVehiclesRoutes);
 app.use("/api/admin/shipments", requireAuth, requireAdmin, adminShipmentsRoutes);
 app.use("/api/admin/users", requireAuth, requireAdmin, adminUsersRoutes);
+
+// --------------------
+// User routers (protected)
+// --------------------
+app.use("/api/user/shipments", requireAuth, requireCustomer, userShipmentsRoutes);
 
 // --------------------
 // Health
@@ -101,7 +139,6 @@ app.post("/api/auth/register", async (req, res) => {
 
     const emailLower = String(email).toLowerCase().trim();
 
-    // ✅ Block admin creation via public registration
     if (ADMIN_EMAIL && emailLower === ADMIN_EMAIL.toLowerCase()) {
       return res.status(403).json({
         ok: false,
@@ -119,7 +156,6 @@ app.post("/api/auth/register", async (req, res) => {
         .json({ ok: false, message: "Email already registered" });
     }
 
-    // ✅ Public registration always creates CUSTOMER (drivers cannot self-register)
     const passwordHash = await bcrypt.hash(String(password), 10);
 
     const user = await prisma.user.create({
@@ -128,8 +164,6 @@ app.post("/api/auth/register", async (req, res) => {
         email: emailLower,
         passwordHash,
         role: "CUSTOMER",
-        // If your schema has status with default ACTIVE, you can omit this.
-        // status: "ACTIVE",
       },
       select: { id: true, name: true, email: true, role: true },
     });
@@ -207,7 +241,9 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
       },
     });
 
-    return res.status(201).json({ ok: true, message: "Message received", data: msg });
+    return res
+      .status(201)
+      .json({ ok: true, message: "Message received", data: msg });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ ok: false, message: "Server error" });
@@ -254,7 +290,6 @@ async function start() {
   await prisma.$connect();
   console.log("✅ Prisma connected (Supabase/Postgres)");
 
-  // Seed admin once (from .env)
   if (ADMIN_EMAIL && ADMIN_PASSWORD) {
     const adminEmail = ADMIN_EMAIL.toLowerCase();
     const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
@@ -267,7 +302,6 @@ async function start() {
           email: adminEmail,
           passwordHash,
           role: "ADMIN",
-          // status: "ACTIVE", // if your schema has it
         },
       });
       console.log("✅ Seeded admin user:", adminEmail);
