@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 import './i18n';
 import { ThemeProvider } from './ThemeContext';
 import { AuthProvider } from "./AuthContext";
+import "leaflet/dist/leaflet.css";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
