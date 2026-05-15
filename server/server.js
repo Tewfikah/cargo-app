@@ -13,6 +13,7 @@ import userShipmentsRoutes from "./src/routes/user.shipments.routes.js";
 import userRequestsRoutes from "./src/routes/user.requests.routes.js";
 import adminRequestsRoutes from "./src/routes/admin.requests.routes.js";
 import adminDriversRoutes from "./src/routes/admin.drivers.routes.js";
+import driverShipmentsRoutes from "./src/routes/driver.shipments.routes.js";
 dotenv.config();
 
 const app = express();
@@ -107,6 +108,13 @@ const requireCustomer = (req, res, next) => {
   return next();
 };
 
+const requireDriver = (req, res, next) => {
+  if (req.user?.role !== "DRIVER") {
+    return res.status(403).json({ ok: false, message: "Driver only" });
+  }
+  return next();
+};
+
 // --------------------
 // Admin routers (protected)
 // --------------------
@@ -120,6 +128,7 @@ app.use("/api/admin/drivers", requireAuth, requireAdmin, adminDriversRoutes);
 app.use("/api/user/shipments", requireAuth, requireCustomer, userShipmentsRoutes);
 app.use("/api/user/requests", requireAuth, requireCustomer, userRequestsRoutes);
 app.use("/api/admin/requests", requireAuth, requireAdmin, adminRequestsRoutes);
+app.use("/api/driver/shipments", requireAuth, requireDriver, driverShipmentsRoutes);
 
 // --------------------
 // Health

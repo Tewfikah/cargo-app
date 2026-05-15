@@ -51,18 +51,19 @@ router.get("/", async (req, res) => {
  * body (any of them):
  *  - status: PENDING | IN_TRANSIT | DELIVERED | DELAYED
  *  - eta: string | null
+ *  - driverId: DRIVER user id | null
+ *  - vehicleId: vehicle id | null
  *
  * ✅ professional assignment:
  *  - driverId: DRIVER user id | null
  *    (server will set driverName automatically)
- *
- * NOTE: driverName is still accepted for backward compatibility,
- * but if you send driverName we will clear driverId to avoid mismatch.
+ *  - vehicleId: vehicle id | null
+ *    (optional: assign a vehicle to this shipment)
  */
 router.patch("/:id", async (req, res) => {
   try {
     const id = String(req.params.id || "");
-    const { status, eta, driverId, driverName } = req.body || {};
+    const { status, eta, driverId, driverName, vehicleId } = req.body || {};
 
     const data = {};
 
@@ -121,6 +122,26 @@ router.patch("/:id", async (req, res) => {
       } else {
         data.driverId = null;
         data.driverName = String(driverName).trim();
+      }
+    }
+
+    // ✅ vehicle assignment by vehicleId (optional)
+    if (vehicleId !== undefined) {
+      if (vehicleId === null || vehicleId === "" || vehicleId === "Unassigned") {
+        data.vehicleId = null;
+      } else {
+        const vid = String(vehicleId).trim();
+
+        const vehicle = await prisma.vehicle.findUnique({
+          where: { id: vid },
+          select: { id: true, vehicleNo: true, status: true },
+        });
+
+        if (!vehicle) {
+          return res.status(400).json({ ok: false, message: "Vehicle not found" });
+        }
+
+        data.vehicleId = vehicle.id;
       }
     }
 
