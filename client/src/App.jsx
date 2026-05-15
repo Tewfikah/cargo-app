@@ -18,7 +18,7 @@ import Messages from "./pages/dashboard/Messages";
 
 import UserDashboard from "./pages/user/UserDashboard";
 import MyShipments from "./pages/user/MyShipments";
-import ShipmentDetails from "./pages/user/ShipmentDetails"; // ✅ NEW
+import ShipmentDetails from "./pages/user/ShipmentDetails";
 import DriverDashboard from "./pages/driver/DriverDashboard";
 
 import RequireAdmin from "./guards/RequireAdmin";

@@ -11,9 +11,11 @@ import {
   Info,
   Phone,
   LogOut,
+  Globe,
 } from "lucide-react";
 import { useTheme } from "../ThemeContext";
 import { useAuth } from "../AuthContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
@@ -132,6 +134,12 @@ const Navbar = () => {
               >
                 <Monitor size={18} />
               </button>
+            </div>
+
+            {/* Language Switcher */}
+            <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-1 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+              <Globe size={16} className="text-slate-600 dark:text-slate-300" />
+              <LanguageSwitcher className="gap-0" />
             </div>
 
             {/* Auth Area */}
@@ -281,6 +289,18 @@ const Navbar = () => {
                     >
                       <Monitor size={16} /> Auto
                     </button>
+                  </div>
+                </div>
+
+                {/* Language */}
+                <div className="mt-6">
+                  <div className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                    Language
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
+                    <Globe size={18} className="text-slate-600 dark:text-slate-300" />
+                    <LanguageSwitcher className="gap-2" />
                   </div>
                 </div>
               </div>

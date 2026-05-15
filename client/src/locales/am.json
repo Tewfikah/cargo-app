@@ -133,7 +133,15 @@
     "recentShipments": "የቅርብ ጊዜ ጭነቶች",
     "recentShipmentsDesc": "አዲስ ጭነቶች እና ሁኔታ",
     "export": "ውጤት ያውጡ",
-    "newShipment": "የአዲስ ጭነት ፍጠር"
+    "newShipment": "የአዲስ ጭነት ፍጠር",
+    "user": {
+      "title": "የተጠቃሚ ዳሽቦርድ",
+      "description": "የግምገማ ሁኔታ ለርስዎ ጭነቶች ነው።"
+    },
+    "driver": {
+      "title": "የአወዳድር ዳሽቦርድ",
+      "subtitle": "የተሰጠዎት ጭነቶች። ሁኔታ ያድሱ እና ቦታ ላክ።"
+    }
   },
   "servicesData": {
     "groundShipping": "የመሬት ጭነት መጓጓዣ",
@@ -152,5 +160,17 @@
     "liveTransitDesc": "ከመጨረሻ እስከ መጨረሻ ተያይነት ከ GPS መከታተል እና በአለም አቀፍ ፍሎት አውታር በኩል በተለመደ የመድረሻ ጊዜ ማስተካከሎች።",
     "proofOfArrival": "የመድረሻ ማስረጃ",
     "proofOfArrivalDesc": "ያልተገናኘ ተላላኪ ከዲጂታል ማስረጃ እና ወደ ማጠናቀቂያ የሚለካ የእርካታ ግብልባት አአያያዝ።"
+  },
+  "user": {
+    "request_shipment": "ጭነት ይጠይቁ",
+    "my_shipments": "የኔ ጭነቶች",
+    "recent_requests": "የቅርብ ጊዜ ጥያቄዎች"
+  },
+  "navbar": {
+    "solutions": "መፍትሄዎች",
+    "about": "ስለ እኛ",
+    "contact": "ያግኙን",
+    "login": "ግባ",
+    "logout": "ውጣ"
   }
 }

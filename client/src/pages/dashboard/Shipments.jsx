@@ -58,6 +58,9 @@ const normalizeShipment = (s) => ({
   // ✅ keep driverId for pre-select in dropdown
   driverId: s.driverId || null,
 
+  // ✅ keep vehicleId for pre-select in vehicle dropdown
+  vehicleId: s.vehicleId || null,
+
   createdAt: s.createdAt,
   updatedAt: s.updatedAt,
 });
@@ -109,8 +112,44 @@ const Shipments = () => {
   useEffect(() => {
     if (tab !== "SHIPMENTS") return;
     loadDrivers();
+    loadVehicles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  // -----------------------
+  // Vehicles (REAL)
+  // -----------------------
+  const [vehicles, setVehicles] = useState([]);
+  const [vehiclesLoading, setVehiclesLoading] = useState(false);
+  const [vehiclesError, setVehiclesError] = useState("");
+
+  const loadVehicles = async () => {
+    try {
+      setVehiclesLoading(true);
+      setVehiclesError("");
+
+      const token = authToken();
+      if (!token) {
+        setVehicles([]);
+        setVehiclesError("Missing token. Please login again.");
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/api/admin/vehicles`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.message || "Failed to load vehicles");
+
+      setVehicles(Array.isArray(json.data) ? json.data : []);
+    } catch (e) {
+      setVehicles([]);
+      setVehiclesError(e?.message || "Server error");
+    } finally {
+      setVehiclesLoading(false);
+    }
+  };
 
   // -----------------------
   // Shipments (REAL DB)
@@ -128,8 +167,10 @@ const Shipments = () => {
   const [modalType, setModalType] = useState(null); // "assign" | "status"
   const [selectedShipment, setSelectedShipment] = useState(null);
 
-  // For assign: modalValue = driverId or "Unassigned"
+  // For assign: modalDriverId and modalVehicleId
   // For status: modalValue = status
+  const [modalDriverId, setModalDriverId] = useState("");
+  const [modalVehicleId, setModalVehicleId] = useState("");
   const [modalValue, setModalValue] = useState("");
 
   const [modalSaving, setModalSaving] = useState(false);
@@ -187,16 +228,20 @@ const Shipments = () => {
     const shipment = shipments.find((s) => s.id === id);
     if (!shipment) return;
 
-    // Ensure drivers are loaded (in case)
+    // Ensure drivers and vehicles are loaded (in case)
     if (drivers.length === 0 && !driversLoading) {
       await loadDrivers();
+    }
+    if (vehicles.length === 0 && !vehiclesLoading) {
+      await loadVehicles();
     }
 
     setSelectedShipment(shipment);
     setModalType("assign");
 
-    // preselect currently assigned driverId if exists, else Unassigned
-    setModalValue(shipment.driverId || "Unassigned");
+    // preselect currently assigned driverId and vehicleId
+    setModalDriverId(shipment.driverId || "Unassigned");
+    setModalVehicleId(shipment.vehicleId || "Unassigned");
 
     setModalError("");
     setIsModalOpen(true);
@@ -217,6 +262,8 @@ const Shipments = () => {
     setIsModalOpen(false);
     setSelectedShipment(null);
     setModalType(null);
+    setModalDriverId("");
+    setModalVehicleId("");
     setModalValue("");
     setModalError("");
     setModalSaving(false);
@@ -236,7 +283,10 @@ const Shipments = () => {
       }
 
       const body = {};
-      if (modalType === "assign") body.driverId = modalValue; // ✅ driverId or "Unassigned"
+      if (modalType === "assign") {
+        body.driverId = modalDriverId; // ✅ driverId or "Unassigned"
+        body.vehicleId = modalVehicleId; // ✅ vehicleId or "Unassigned"
+      }
       if (modalType === "status") body.status = modalValue;
 
       const res = await fetch(`${API_BASE}/api/admin/shipments/${selectedShipment._dbId}`, {
@@ -511,7 +561,7 @@ const Shipments = () => {
           <Modal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            title={modalType === "assign" ? "Assign Driver" : "Update Status"}
+            title={modalType === "assign" ? "Assign Driver & Vehicle" : "Update Status"}
           >
             <div className="p-6">
               {modalError && (
@@ -535,8 +585,8 @@ const Shipments = () => {
                     </label>
 
                     <select
-                      value={modalValue}
-                      onChange={(e) => setModalValue(e.target.value)}
+                      value={modalDriverId}
+                      onChange={(e) => setModalDriverId(e.target.value)}
                       disabled={driversLoading}
                       className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
                     >
@@ -557,6 +607,36 @@ const Shipments = () => {
                     {!driversLoading && drivers.length === 0 && (
                       <p className="mt-2 text-xs text-amber-700 dark:text-amber-200">
                         No active drivers found. Create a DRIVER account first.
+                      </p>
+                    )}
+
+                    <label className="mb-1 mt-4 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                      Select Vehicle (Optional)
+                    </label>
+
+                    <select
+                      value={modalVehicleId}
+                      onChange={(e) => setModalVehicleId(e.target.value)}
+                      disabled={vehiclesLoading}
+                      className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-70 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                    >
+                      <option value="Unassigned">Unassigned</option>
+                      {vehicles.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.vehicleNo || v.id} ({v.type})
+                        </option>
+                      ))}
+                    </select>
+
+                    {vehiclesLoading && (
+                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-300">
+                        Loading vehicles...
+                      </p>
+                    )}
+
+                    {!vehiclesLoading && vehicles.length === 0 && (
+                      <p className="mt-2 text-xs text-amber-700 dark:text-amber-200">
+                        No vehicles found. Add vehicles in Fleet Management first.
                       </p>
                     )}
                   </div>
@@ -597,7 +677,7 @@ const Shipments = () => {
               </div>
 
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-300">
-                Assign uses driverId (professional). Status/Driver saves to DB.
+                Assign driver & vehicle (optional) to shipment. Status updates save directly to DB.
               </p>
             </div>
           </Modal>

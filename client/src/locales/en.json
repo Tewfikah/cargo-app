@@ -133,7 +133,15 @@
     "recentShipments": "Recent Shipments",
     "recentShipmentsDesc": "Latest shipments and status",
     "export": "Export",
-    "newShipment": "New Shipment"
+    "newShipment": "New Shipment",
+    "user": {
+      "title": "User Dashboard",
+      "description": "Here is your shipment overview."
+    },
+    "driver": {
+      "title": "Driver Dashboard",
+      "subtitle": "Your assigned shipments. Update status and send location."
+    }
   },
   "servicesData": {
     "groundShipping": "Ground Shipping",
@@ -152,5 +160,17 @@
     "liveTransitDesc": "End-to-end visibility with GPS tracking and predictive ETA updates via our global fleet network.",
     "proofOfArrival": "Proof of Arrival",
     "proofOfArrivalDesc": "Contactless delivery with digital proof and instant satisfaction feedback integration."
+  },
+  "user": {
+    "request_shipment": "Request Shipment",
+    "my_shipments": "My Shipments",
+    "recent_requests": "Recent Requests"
+  },
+  "navbar": {
+    "solutions": "Solutions",
+    "about": "About Us",
+    "contact": "Contact",
+    "login": "Log in",
+    "logout": "Logout"
   }
 }

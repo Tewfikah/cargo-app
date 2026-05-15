@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../AuthContext";
 
 const API_BASE = "http://localhost:5000";
 
@@ -65,6 +68,9 @@ const DriverDashboard = () => {
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { t } = useTranslation();
 
   // modal state (location)
   const [open, setOpen] = useState(false);
@@ -255,13 +261,16 @@ const DriverDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 transition-colors duration-300 dark:bg-slate-900">
-      <div className="mb-6">
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-          Driver Dashboard
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">
-          Your assigned shipments. Update status and send location.
-        </p>
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex-1">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
+            {t("dashboard.driver.title") || "Driver Dashboard"}
+          </h1>
+          <p className="mt-2 text-slate-600 dark:text-slate-300">
+            {t("dashboard.driver.subtitle") || "Your assigned shipments. Update status and send location."}
+          </p>
+        </div>
       </div>
 
       {/* Stats */}

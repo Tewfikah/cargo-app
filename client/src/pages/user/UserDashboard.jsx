@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../AuthContext";
 import {
   STATUS_LABELS_EN,
@@ -110,6 +111,7 @@ const Modal = ({ open, title, onClose, children }) => {
 const UserDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Shipments
   const [shipments, setShipments] = useState([]);
@@ -283,10 +285,10 @@ const UserDashboard = () => {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            User Dashboard
+            {t("dashboard.user.title") || "User Dashboard"}
           </h1>
           <p className="mt-2 text-slate-600 dark:text-slate-300">
-            Welcome, <b>{user?.name || "User"}</b>. Here is your shipment overview.
+            Welcome, <b>{user?.name || "User"}</b>. {t("dashboard.user.description") || "Here is your shipment overview."}
           </p>
         </div>
 
@@ -296,7 +298,7 @@ const UserDashboard = () => {
             onClick={openModal}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
           >
-            Request Shipment
+            {t("user.request_shipment") || "Request Shipment"}
           </button>
 
           <button
@@ -304,7 +306,7 @@ const UserDashboard = () => {
             onClick={() => navigate("/my-shipments")}
             className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
           >
-            My Shipments
+            {t("user.my_shipments") || "My Shipments"}
           </button>
         </div>
       </div>
